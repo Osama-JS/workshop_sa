@@ -118,8 +118,8 @@ class ServiceController extends Controller
             'content_ar' => $validated['content_ar'] ?? null,
             'content_en' => $validated['content_en'] ?? null,
             'icon' => $validated['icon'] ?? $service->icon,
-            'is_active' => $request->boolean('is_active', true),
-            'is_featured' => $request->boolean('is_featured', false),
+            'is_active' => $request->boolean('is_active'),
+            'is_featured' => $request->boolean('is_featured'),
             'sort_order' => $validated['sort_order'] ?? 0,
         ];
 

@@ -104,7 +104,7 @@ class HeroSlideController extends Controller
             'secondary_btn_text_ar' => $validated['secondary_btn_text_ar'] ?? null,
             'secondary_btn_text_en' => $validated['secondary_btn_text_en'] ?? null,
             'secondary_btn_url' => $validated['secondary_btn_url'] ?? null,
-            'is_active' => $request->boolean('is_active', true),
+            'is_active' => $request->boolean('is_active'),
             'sort_order' => $validated['sort_order'] ?? 0,
         ];
 

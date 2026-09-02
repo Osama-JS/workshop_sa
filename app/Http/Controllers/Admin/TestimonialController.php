@@ -108,7 +108,7 @@ class TestimonialController extends Controller
             'rating' => $validated['rating'],
             'comment_ar' => $validated['comment_ar'],
             'comment_en' => $validated['comment_en'],
-            'is_active' => $request->boolean('is_active', true),
+            'is_active' => $request->boolean('is_active'),
             'sort_order' => $validated['sort_order'] ?? 0,
         ];
 

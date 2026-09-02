@@ -116,7 +116,7 @@ class CustomPageController extends Controller
             'meta_title_en' => $validated['meta_title_en'] ?? null,
             'meta_desc_ar' => $validated['meta_desc_ar'] ?? null,
             'meta_desc_en' => $validated['meta_desc_en'] ?? null,
-            'is_active' => $request->boolean('is_active', true),
+            'is_active' => $request->boolean('is_active'),
             'sort_order' => $validated['sort_order'] ?? 0,
         ]);
 

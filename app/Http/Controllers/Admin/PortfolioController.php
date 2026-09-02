@@ -168,8 +168,8 @@ class PortfolioController extends Controller
             'description_ar' => $validated['description_ar'] ?? null,
             'description_en' => $validated['description_en'] ?? null,
             'video_url' => $validated['video_url'] ?? null,
-            'is_active' => $request->boolean('is_active', true),
-            'is_featured' => $request->boolean('is_featured', false),
+            'is_active' => $request->boolean('is_active'),
+            'is_featured' => $request->boolean('is_featured'),
             'sort_order' => $validated['sort_order'] ?? 0,
         ];
 
