@@ -15,8 +15,9 @@ use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
-// Language Switch Route
-Route::get('lang/{locale}', [LocaleController::class, 'switch'])->name('locale.switch');
+// Language Switch Route (use 'locale/{locale}' to prevent physical 'lang/' directory collision in Apache)
+Route::get('locale/{locale}', [LocaleController::class, 'switch'])->name('locale.switch');
+Route::get('lang/{locale}', [LocaleController::class, 'switch']);
 
 // Public Frontend Routes
 Route::get('/', [\App\Http\Controllers\Frontend\HomeController::class, 'index'])->name('home');

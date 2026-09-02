@@ -5,8 +5,9 @@
 
     RewriteEngine On
 
-    # 1. Directly route storage/ requests to index.php so Laravel serves storage/app/public files safely
+    # 1. Directly route storage/ and lang/ requests to index.php to prevent directory browsing or collision
     RewriteRule ^storage/ index.php [L]
+    RewriteRule ^lang/ index.php [L]
 
     # 2. Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
