@@ -267,8 +267,9 @@
 @endsection
 
 @push('scripts')
-<!-- Load Local Chart.js -->
-<script src="{{ asset('vendor/chartjs/chart.umd.min.js') }}"></script>
+<!-- Load Chart.js (CDN + Local Fallback) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>window.Chart || document.write('<script src="{{ asset('vendor/chartjs/chart.umd.min.js') }}"><\/script>')</script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         if (typeof Chart === 'undefined') return;

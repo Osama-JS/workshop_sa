@@ -55,7 +55,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Local Vendor CSS: FontAwesome, Toastr, Select2 -->
+    <!-- Global & Fast CDN for FontAwesome 6 Icons, Toastr, Select2 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
     <link rel="stylesheet" href="{{ asset('vendor/fontawesome/all.min.css') }}">
     <link rel="stylesheet" href="{{ asset('vendor/toastr/toastr.min.css') }}">
     <link rel="stylesheet" href="{{ asset('vendor/select2/select2.min.css') }}">
@@ -857,9 +860,11 @@
     <!-- Direct WhatsApp Floating Action Widget -->
     @include('frontend.partials.whatsapp_widget')
 
-    <!-- Core Local Scripts: jQuery & Select2 -->
-    <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
-    <script src="{{ asset('vendor/select2/select2.min.js') }}"></script>
+    <!-- Core Scripts: jQuery & Select2 (Global Fast CDN with fallback) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="{{ asset('vendor/jquery/jquery.min.js') }}"><\/script>')</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script>window.jQuery && window.jQuery.fn.select2 || document.write('<script src="{{ asset('vendor/select2/select2.min.js') }}"><\/script>')</script>
     <script>
         function toggleMobileNav() {
             const drawer = document.getElementById('mobileDrawer');
