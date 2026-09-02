@@ -854,8 +854,10 @@
         </div>
     </footer>
 
-    <!-- AI Joinery Assistant Floating Widget -->
-    @include('frontend.partials.ai_chat_widget')
+    <!-- AI Joinery Assistant Floating Widget (Rendered only when enabled in Settings) -->
+    @if((string)\App\Models\Setting::get('ai_enabled', '1') === '1')
+        @include('frontend.partials.ai_chat_widget')
+    @endif
 
     <!-- Direct WhatsApp Floating Action Widget -->
     @include('frontend.partials.whatsapp_widget')

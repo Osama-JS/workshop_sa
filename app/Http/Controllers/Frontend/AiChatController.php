@@ -97,6 +97,16 @@ class AiChatController extends Controller
 
         $userText = $request->input('message') ?: ($uploadedImagePath ? (app()->getLocale() === 'ar' ? 'أود الاستفسار عن تفصيل هذا التصميم الخشبي المرفق' : 'I would like to inquire about this woodwork design') : '');
 
+        if ((string) Setting::get('ai_enabled', '1') !== '1') {
+            return response()->json([
+                'success' => false,
+                'reply' => app()->getLocale() === 'ar' 
+                    ? 'المساعد الذكي معطل مؤقتاً لأعمال الصيانة والتحديث. يرجى التواصل معنا عبر واتساب أو نموذج الطلبات المخصصة.' 
+                    : 'The AI Assistant is temporarily deactivated for maintenance. Please contact us via WhatsApp or custom orders form.',
+                'suggested_ideas' => [],
+            ]);
+        }
+
         // 1. Save User Message
         AiChatMessage::create([
             'ai_chat_session_id' => $session->id,

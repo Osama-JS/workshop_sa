@@ -1,3 +1,4 @@
+@if((string)\App\Models\Setting::get('ai_enabled', '1') === '1')
 <!-- =========================================================================
      ARTISAN LUXURY AI JOINERY CONSULTANT - FLOATING CHAT WIDGET
      ========================================================================= -->
@@ -596,3 +597,4 @@
     }
 </script>
 @endpush
+@endif

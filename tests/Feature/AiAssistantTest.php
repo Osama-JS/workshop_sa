@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\AiDesignIdea;
 use App\Models\CustomOrder;
 use App\Models\Role;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -189,5 +190,18 @@ class AiAssistantTest extends TestCase
         $indexRes = $this->actingAs($superAdmin)->get(route('admin.ai-logs.index'));
         $indexRes->assertStatus(200)
             ->assertSee(__('admin.ai_logs_list'));
+    }
+
+    public function test_ai_widget_is_hidden_when_disabled_in_settings()
+    {
+        // 1. When enabled, widget is present
+        Setting::set('ai_enabled', '1');
+        $resEnabled = $this->get(route('home'));
+        $resEnabled->assertStatus(200)->assertSee('id="artisanAiWidget"', false);
+
+        // 2. When disabled, widget is completely absent
+        Setting::set('ai_enabled', '0');
+        $resDisabled = $this->get(route('home'));
+        $resDisabled->assertStatus(200)->assertDontSee('id="artisanAiWidget"', false);
     }
 }
