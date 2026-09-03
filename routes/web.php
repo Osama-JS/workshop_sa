@@ -147,14 +147,18 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 // Direct Public Storage File Serving Route (Guarantees seamless file serving across all hostings & XAMPP)
 Route::get('storage/{path}', function ($path) {
+    $cleanPath = preg_replace('#^app/public/#', '', $path);
     $candidates = [
+        storage_path('app/public/' . $cleanPath),
         storage_path('app/public/' . $path),
+        public_path('storage/' . $cleanPath),
         public_path('storage/' . $path),
         storage_path('app/' . $path),
+        base_path('storage/app/public/' . $cleanPath),
     ];
 
     foreach ($candidates as $filePath) {
-        if (file_exists($filePath) && is_file($filePath)) {
+        if ($filePath && file_exists($filePath) && is_file($filePath)) {
             return response()->file($filePath, [
                 'Cache-Control' => 'public, max-age=86400',
             ]);
