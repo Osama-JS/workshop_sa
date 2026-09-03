@@ -204,8 +204,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('settings/send-test-mail', [SettingController::class, 'sendTestMail'])->name('settings.send-test-mail')->middleware('permission:settings.edit');
         });
 
-        // AI Assistant Knowledge Base & Chat Logs
+        // AI Assistant Knowledge Base, FAQs & Chat Logs
         Route::resource('ai-ideas', \App\Http\Controllers\Admin\AiDesignIdeaController::class)->except(['show']);
+        Route::resource('ai-faqs', \App\Http\Controllers\Admin\AiFaqController::class)->except(['show']);
         Route::resource('ai-logs', \App\Http\Controllers\Admin\AiChatLogController::class)->only(['index', 'show', 'destroy']);
     });
 });

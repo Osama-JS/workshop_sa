@@ -60,6 +60,8 @@ class AiChatController extends Controller
             ];
         });
 
+        $quota = $session->getDailyQuotaInfo();
+
         return response()->json([
             'success' => true,
             'enabled' => $aiEnabled,
@@ -71,6 +73,7 @@ class AiChatController extends Controller
             ],
             'quick_chips' => $quickChips,
             'messages' => $messages,
+            'quota' => $quota,
         ]);
     }
 
@@ -90,6 +93,23 @@ class AiChatController extends Controller
             ['visitor_ip' => $request->ip()]
         );
 
+        $quota = $session->getDailyQuotaInfo();
+
+        if ($quota['is_exhausted']) {
+            $exhaustedMsg = app()->getLocale() === 'ar'
+                ? 'لقد استهلكت رصيد الاستفسارات اليومي المجاني (' . $quota['max_limit'] . ' استفسار). يسعد فريقنا البشري خدمتك ومتابعة طلبك فوراً عبر واتساب أو الاتصال المباشر!'
+                : 'You have reached today\'s daily inquiry limit (' . $quota['max_limit'] . ' messages). Our human team is delighted to assist you directly via WhatsApp or phone!';
+            
+            return response()->json([
+                'success' => true,
+                'reply' => $exhaustedMsg,
+                'suggested_ideas' => [],
+                'order' => null,
+                'quota' => $quota,
+                'created_at' => now()->format('H:i'),
+            ]);
+        }
+
         $uploadedImagePath = null;
         if ($request->hasFile('image')) {
             $uploadedImagePath = $request->file('image')->store('ai_chat_uploads', 'public');
@@ -104,6 +124,7 @@ class AiChatController extends Controller
                     ? 'المساعد الذكي معطل مؤقتاً لأعمال الصيانة والتحديث. يرجى التواصل معنا عبر واتساب أو نموذج الطلبات المخصصة.' 
                     : 'The AI Assistant is temporarily deactivated for maintenance. Please contact us via WhatsApp or custom orders form.',
                 'suggested_ideas' => [],
+                'quota' => $quota,
             ]);
         }
 
@@ -129,7 +150,7 @@ class AiChatController extends Controller
             ],
         ]);
 
-        $session->increment('total_messages', 2);
+        $updatedQuota = $session->getDailyQuotaInfo();
 
         return response()->json([
             'success' => true,
@@ -138,6 +159,7 @@ class AiChatController extends Controller
             'order' => $result['order'] ?? null,
             'message_id' => $assistantMsg->id,
             'created_at' => now()->format('H:i'),
+            'quota' => $updatedQuota,
         ]);
     }
 

@@ -700,10 +700,6 @@
                         <i class="fa-solid fa-headset w-5 text-center text-gold-500"></i>
                         <span>{{ app()->getLocale() === 'ar' ? 'تواصل معنا' : 'Contact Us' }}</span>
                     </a>
-                    <a href="{{ route('order.track') }}" onclick="toggleMobileNav()" class="flex items-center gap-3 py-3 px-4 rounded-2xl transition {{ request()->routeIs('order.track') ? 'bg-gold-500/15 text-gold-400 border border-gold-500/30' : 'text-slate-200 hover:bg-white/5' }}">
-                        <i class="fa-solid fa-magnifying-glass-location w-5 text-center text-gold-500"></i>
-                        <span>{{ app()->getLocale() === 'ar' ? 'تتبع طلبك' : 'Track Order' }}</span>
-                    </a>
                     @foreach($navPages as $page)
                         <a href="{{ route('page.show', $page->slug) }}" onclick="toggleMobileNav()" class="flex items-center gap-3 py-3 px-4 rounded-2xl text-slate-200 hover:bg-white/5 transition">
                             <i class="fa-solid fa-file-lines w-5 text-center text-gold-500"></i>

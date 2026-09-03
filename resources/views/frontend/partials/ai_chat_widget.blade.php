@@ -64,6 +64,18 @@
             </div>
         </div>
 
+        <!-- Quota & Tokens Status Bar -->
+        <div id="aiQuotaBar" class="px-4 py-1.5 bg-dark-900/90 border-b border-white/5 flex items-center justify-between text-[11px] text-slate-300">
+            <div class="flex items-center gap-1.5">
+                <i class="fa-solid fa-bolt text-gold-400 text-xs animate-pulse"></i>
+                <span class="font-bold text-slate-300">{{ app()->getLocale() === 'ar' ? 'الرصيد المتبقي اليوم:' : 'Daily Remaining Quota:' }}</span>
+                <span id="aiQuotaRemainingText" class="font-mono font-bold text-gold-400">-- / --</span>
+            </div>
+            <div class="w-24 bg-white/10 rounded-full h-1.5 overflow-hidden">
+                <div id="aiQuotaProgressBar" class="bg-gradient-to-r from-gold-500 to-emerald-400 h-full rounded-full transition-all duration-500" style="width: 100%;"></div>
+            </div>
+        </div>
+
         <!-- Chat Messages Scroll Area -->
         <div id="aiChatMessages" class="flex-1 overflow-y-auto p-4 space-y-4 text-xs scroll-smooth bg-dark-900/60">
             <!-- Loading initial state -->
@@ -196,6 +208,24 @@
         }
     });
 
+    // Update Quota Bar UI
+    function updateQuotaUI(quota) {
+        if (!quota) return;
+        const remainingEl = document.getElementById('aiQuotaRemainingText');
+        const barEl = document.getElementById('aiQuotaProgressBar');
+        if (remainingEl) {
+            remainingEl.textContent = `${quota.remaining} / ${quota.max_limit}`;
+        }
+        if (barEl) {
+            barEl.style.width = `${quota.percent}%`;
+            if (quota.remaining <= 3) {
+                barEl.className = 'bg-gradient-to-r from-rose-500 to-amber-500 h-full rounded-full transition-all duration-500';
+            } else {
+                barEl.className = 'bg-gradient-to-r from-gold-500 to-emerald-400 h-full rounded-full transition-all duration-500';
+            }
+        }
+    }
+
     // Initialize or Resume AI Chat
     async function initAiSession() {
         const loadingInit = document.getElementById('aiChatLoadingInit');
@@ -209,6 +239,9 @@
 
                 // Update Bot Name & Role
                 document.getElementById('aiHeaderBotName').textContent = data.bot.name;
+
+                // Update Quota
+                updateQuotaUI(data.quota);
 
                 // Render Quick Chips
                 renderQuickChips(data.quick_chips);
@@ -334,10 +367,14 @@
             const data = await res.json();
             removeTypingIndicator();
 
+            if (data.quota) {
+                updateQuotaUI(data.quota);
+            }
+
             if (data.success) {
                 appendBotMessage(data.reply, data.suggested_ideas || [], data.order || null, data.created_at);
             } else {
-                appendBotMessage('عذراً، حدث خطأ أثناء معالجة الرد. يرجى المحاولة مرة أخرى.', [], null, nowTime);
+                appendBotMessage(data.reply || 'عذراً، حدث خطأ أثناء معالجة الرد. يرجى المحاولة مرة أخرى.', [], null, nowTime);
             }
         } catch (error) {
             console.error('Error in sendAiMessage:', error);

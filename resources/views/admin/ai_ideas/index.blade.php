@@ -24,6 +24,22 @@
         </div>
     </div>
 
+    <!-- AI Hub Tabs Navigation -->
+    <div class="flex items-center gap-2 border-b border-slate-200 pb-2 overflow-x-auto">
+        <a href="{{ route('admin.ai-ideas.index') }}" class="px-5 py-2.5 rounded-2xl bg-wood-600 text-white font-bold text-xs shadow-md flex items-center gap-2">
+            <i class="fa-solid fa-lightbulb"></i>
+            <span>أفكار وتصاميم الذكاء الاصطناعي ({{ \App\Models\AiDesignIdea::count() }})</span>
+        </a>
+        <a href="{{ route('admin.ai-faqs.index') }}" class="px-5 py-2.5 rounded-2xl bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs border border-slate-200 transition flex items-center gap-2">
+            <i class="fa-solid fa-circle-question text-gold-500"></i>
+            <span>بنك الأسئلة والأجوبة المعتمدة ({{ \App\Models\AiFaq::count() }})</span>
+        </a>
+        <a href="{{ route('admin.ai-logs.index') }}" class="px-5 py-2.5 rounded-2xl bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs border border-slate-200 transition flex items-center gap-2">
+            <i class="fa-solid fa-comments text-wood-600"></i>
+            <span>سجلات محادثات العملاء ({{ \App\Models\AiChatSession::count() }})</span>
+        </a>
+    </div>
+
     <!-- Filters & Search -->
     <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-col sm:flex-row gap-4 justify-between items-center">
         <form method="GET" action="{{ route('admin.ai-ideas.index') }}" class="flex flex-wrap items-center gap-3 w-full sm:w-auto">

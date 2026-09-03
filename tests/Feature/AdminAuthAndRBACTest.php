@@ -17,7 +17,7 @@ class AdminAuthAndRBACTest extends TestCase
     {
         $response = $this->get('/admin/login');
         $response->assertStatus(200);
-        $response->assertSee('admin@artisanwood.sa');
+        $response->assertSee(route('admin.login.submit'));
     }
 
     public function test_super_admin_can_login_and_access_dashboard(): void

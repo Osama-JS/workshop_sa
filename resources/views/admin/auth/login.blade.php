@@ -117,7 +117,7 @@
                         <div class="absolute inset-y-0 {{ app()->getLocale() === 'ar' ? 'right-0 pr-3.5' : 'left-0 pl-3.5' }} flex items-center pointer-events-none text-slate-500">
                             <i class="fa-regular fa-envelope"></i>
                         </div>
-                        <input type="email" id="email" name="email" value="{{ old('email', 'admin@artisanwood.sa') }}" required autofocus
+                        <input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus
                             class="w-full bg-slate-950/60 border border-slate-700/70 rounded-xl {{ app()->getLocale() === 'ar' ? 'pr-10 pl-4' : 'pl-10 pr-4' }} py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-wood-500 focus:ring-2 focus:ring-wood-500/20 transition"
                             placeholder="admin@example.com">
                     </div>
@@ -132,7 +132,7 @@
                         <div class="absolute inset-y-0 {{ app()->getLocale() === 'ar' ? 'right-0 pr-3.5' : 'left-0 pl-3.5' }} flex items-center pointer-events-none text-slate-500">
                             <i class="fa-solid fa-lock"></i>
                         </div>
-                        <input type="password" id="password" name="password" value="admin123456" required
+                        <input type="password" id="password" name="password" required
                             class="w-full bg-slate-950/60 border border-slate-700/70 rounded-xl {{ app()->getLocale() === 'ar' ? 'pr-10 pl-4' : 'pl-10 pr-4' }} py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-wood-500 focus:ring-2 focus:ring-wood-500/20 transition"
                             placeholder="••••••••">
                     </div>
@@ -152,17 +152,6 @@
                     <span>{{ __('admin.login_button') }}</span>
                 </button>
             </form>
-
-            <!-- Test Accounts Helper Box -->
-            <div class="mt-8 pt-6 border-t border-slate-800/80 text-xs text-slate-400 space-y-2">
-                <div class="font-bold text-slate-300 text-center mb-1">بيانات الحسابات التجريبية (Demo Accounts):</div>
-                <div class="bg-slate-950/50 p-2.5 rounded-xl border border-slate-800/60 space-y-1 font-mono text-[11px]">
-                    <div class="flex justify-between"><span>👑 Super Admin:</span><span class="text-wood-400">admin@artisanwood.sa</span></div>
-                    <div class="flex justify-between"><span>✍️ Content Manager:</span><span class="text-wood-400">editor@artisanwood.sa</span></div>
-                    <div class="flex justify-between"><span>🎧 Support:</span><span class="text-wood-400">support@artisanwood.sa</span></div>
-                    <div class="text-center text-slate-500 mt-1">Pass: <strong class="text-slate-300">admin123456</strong> / <strong class="text-slate-300">editor123456</strong></div>
-                </div>
-            </div>
         </div>
     </div>
 </body>

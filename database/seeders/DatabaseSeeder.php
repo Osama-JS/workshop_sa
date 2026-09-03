@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             InitialContentSeeder::class,
             AdminUserSeeder::class,
             AiAssistantSeeder::class,
+            AiFaqSeeder::class,
         ]);
     }
 }

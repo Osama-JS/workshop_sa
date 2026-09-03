@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\AiDesignIdea;
+use App\Models\AiFaq;
 use App\Models\CustomOrder;
 use App\Models\Role;
 use App\Models\Setting;
@@ -19,10 +20,11 @@ class AiAssistantTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        app()->setLocale('ar');
         $this->seed();
     }
 
-    public function test_ai_chat_init_returns_valid_session_and_chips()
+    public function test_ai_chat_init_returns_valid_session_chips_and_quota()
     {
         $response = $this->getJson(route('ai.chat.init'));
 
@@ -34,8 +36,27 @@ class AiAssistantTest extends TestCase
                 'bot' => ['name', 'role', 'welcome_message'],
                 'quick_chips',
                 'messages',
+                'quota' => ['max_limit', 'used_today', 'remaining', 'percent', 'is_exhausted'],
             ])
             ->assertJson(['success' => true]);
+
+        $this->assertEquals(25, $response->json('quota.max_limit'));
+        $this->assertEquals(25, $response->json('quota.remaining'));
+    }
+
+    public function test_ai_chat_first_message_includes_self_introduction()
+    {
+        $sessionRes = $this->getJson(route('ai.chat.init'));
+        $token = $sessionRes->json('session_token');
+
+        $response = $this->postJson(route('ai.chat.send'), [
+            'session_token' => $token,
+            'message' => 'أبحث عن أفكار لغرف النوم',
+        ]);
+
+        $response->assertStatus(200);
+        $reply = $response->json('reply');
+        $this->assertStringContainsString('المستشار الذكي', $reply);
     }
 
     public function test_ai_chat_send_answers_bedroom_inquiries_with_suggested_ideas()
@@ -53,10 +74,38 @@ class AiAssistantTest extends TestCase
                 'success',
                 'reply',
                 'suggested_ideas',
+                'quota',
             ])
             ->assertJson(['success' => true]);
 
         $this->assertNotEmpty($response->json('suggested_ideas'));
+        $this->assertEquals(24, $response->json('quota.remaining'));
+    }
+
+    public function test_ai_chat_answers_from_ai_faq_knowledge_base()
+    {
+        AiFaq::create([
+            'question_ar' => 'ما هي مدة الضمان على المفصلات الألمانية؟',
+            'question_en' => 'What is the warranty period on German hinges?',
+            'answer_ar' => 'نقدم ضماناً لمدة 10 سنوات على كافة المفصلات الألمانية الأصلية من شركة بلوم.',
+            'answer_en' => 'We offer a 10-year warranty on all original German Blum hinges.',
+            'category' => 'warranty',
+            'keywords' => 'مفصلات, بلوم, blum, كفالة',
+            'is_active' => true,
+        ]);
+
+        $sessionRes = $this->getJson(route('ai.chat.init'));
+        $token = $sessionRes->json('session_token');
+
+        $response = $this->postJson(route('ai.chat.send'), [
+            'session_token' => $token,
+            'message' => 'ما هي مدة الضمان على المفصلات الألمانية؟',
+        ]);
+
+        $response->assertStatus(200);
+        $reply = $response->json('reply');
+        $this->assertStringContainsString('10 سنوات', $reply);
+        $this->assertStringContainsString('بلوم', $reply);
     }
 
     public function test_ai_chat_guardrail_declines_off_topic_questions()
@@ -66,7 +115,7 @@ class AiAssistantTest extends TestCase
 
         $response = $this->postJson(route('ai.chat.send'), [
             'session_token' => $token,
-            'message' => 'ما هي أفضل وصفة لطبخ البيتزا الإيطالية؟',
+            'message' => 'ما هي أفضل طريقة لطبخ البيتزا والباستا الإيطالية؟',
         ]);
 
         $response->assertStatus(200);
@@ -124,6 +173,52 @@ class AiAssistantTest extends TestCase
         $this->assertDatabaseHas('custom_orders', [
             'customer_name' => 'خالد بن فيصل',
             'customer_phone' => '0512345678',
+        ]);
+    }
+
+    public function test_admin_can_crud_ai_faqs()
+    {
+        $superAdmin = User::where('email', 'admin@artisanwood.sa')->first();
+
+        // 1. Create FAQ
+        $createRes = $this->actingAs($superAdmin)->post(route('admin.ai-faqs.store'), [
+            'question_ar' => 'هل تقومون بالتوصيل لجميع مناطق المملكة؟',
+            'question_en' => 'Do you deliver across all Saudi regions?',
+            'answer_ar' => 'نعم، نوفر الشحن والتركيب في الرياض وكافة مناطق المملكة.',
+            'answer_en' => 'Yes, we deliver and install in Riyadh and all KSA regions.',
+            'category' => 'services',
+            'keywords' => 'توصيل, شحن, مناطق, خارج الرياض',
+            'is_active' => '1',
+            'sort_order' => 1,
+        ]);
+
+        $createRes->assertRedirect(route('admin.ai-faqs.index'));
+        $this->assertDatabaseHas('ai_faqs', [
+            'question_ar' => 'هل تقومون بالتوصيل لجميع مناطق المملكة؟',
+        ]);
+
+        $faq = AiFaq::where('question_ar', 'هل تقومون بالتوصيل لجميع مناطق المملكة؟')->first();
+
+        // 2. Update FAQ
+        $updateRes = $this->actingAs($superAdmin)->put(route('admin.ai-faqs.update', $faq->id), [
+            'question_ar' => 'هل تقومون بالتوصيل والتركيب لجميع مناطق المملكة؟',
+            'answer_ar' => 'نعم، نوفر أسطول توصيل وتركيب لكافة مدن المملكة مجاناً للطلبات الكبيرة.',
+            'category' => 'services',
+            'is_active' => '1',
+            'sort_order' => 2,
+        ]);
+
+        $updateRes->assertRedirect(route('admin.ai-faqs.index'));
+        $this->assertDatabaseHas('ai_faqs', [
+            'id' => $faq->id,
+            'question_ar' => 'هل تقومون بالتوصيل والتركيب لجميع مناطق المملكة؟',
+        ]);
+
+        // 3. Delete FAQ
+        $deleteRes = $this->actingAs($superAdmin)->delete(route('admin.ai-faqs.destroy', $faq->id));
+        $deleteRes->assertRedirect(route('admin.ai-faqs.index'));
+        $this->assertDatabaseMissing('ai_faqs', [
+            'id' => $faq->id,
         ]);
     }
 

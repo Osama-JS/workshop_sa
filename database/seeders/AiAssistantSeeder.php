@@ -23,6 +23,7 @@ class AiAssistantSeeder extends Seeder
             'ai_welcome_msg_en' => 'Welcome to Artisan Luxury Woodwork Workshop! 🪵✨ I am your AI Joinery Consultant. How can I assist you with custom designs, bedrooms, offices, booths, wood selection, or instant custom order quotation?',
             'ai_temperature' => '0.7',
             'ai_max_tokens' => '1000',
+            'ai_daily_message_limit' => '25',
             'ai_system_prompt_ar' => 'أنت مستشار هندسي وحرفي ذكي ومحترف لورشة "أرتيزان للأعمال الخشبية الفاخرة" في المملكة العربية السعودية.
 مهمتك الأساسية هي:
 1. الترحيب بالعملاء بلباقة واحترافية وبلهجة سعودية راقية أو عربية فصحى دافئة.
