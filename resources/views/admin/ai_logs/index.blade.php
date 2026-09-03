@@ -102,7 +102,7 @@
                                         <i class="fa-solid fa-eye"></i>
                                         <span>عرض الحوار</span>
                                     </a>
-                                    <form method="POST" action="{{ route('admin.ai-logs.destroy', $session->id) }}" onsubmit="return confirm('هل تريد حذف سجل هذه الجلسة؟');" class="inline">
+                                    <form method="POST" action="{{ route('admin.ai-logs.destroy', $session->id) }}" data-confirm="هل تريد بالتأكيد حذف سجل هذه الجلسة بالكامل من النظام؟" class="inline">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition" title="حذف">

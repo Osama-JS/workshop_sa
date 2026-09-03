@@ -19,6 +19,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.snow.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+    <!-- SweetAlert2 JS (Loaded in Head for immediate global availability) -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- Tailwind CSS (CDN / Play) -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -350,35 +354,78 @@
             }
         }
 
+        // Global Luxury SweetAlert2 Defaults
+        const LuxurySwal = Swal.mixin({
+            customClass: {
+                popup: 'rounded-3xl border border-slate-100 shadow-2xl p-6 font-sans',
+                title: 'text-xl font-black text-slate-900 mb-2',
+                htmlContainer: 'text-xs text-slate-600 leading-relaxed',
+                confirmButton: 'px-6 py-2.5 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-lg shadow-rose-600/20 transition mx-1.5 cursor-pointer',
+                cancelButton: 'px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition mx-1.5 cursor-pointer',
+                actions: 'mt-4 gap-2'
+            },
+            buttonsStyling: false,
+            backdrop: 'rgba(15, 23, 42, 0.75)',
+            reverseButtons: true
+        });
 
-
-        // Global SweetAlert Confirm Delete Handler
-        if (typeof $ !== 'undefined') {
-            $(document).on('click', '.confirm-delete', function(e) {
-                e.preventDefault();
-                const form = $(this).closest('form');
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({
-                        title: "{{ __('admin.confirm_delete') }}",
-                        text: "{{ __('admin.confirm_delete_msg') }}",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#d33',
-                        cancelButtonColor: '#6b7280',
-                        confirmButtonText: "{{ __('admin.yes_delete') }}",
-                        cancelButtonText: "{{ __('admin.cancel') }}"
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit();
-                        }
-                    });
-                } else {
-                    if (confirm("{{ __('admin.confirm_delete') }}")) {
-                        form.submit();
-                    }
+        // Global Confirmation Modal Function (Can be called directly anywhere)
+        window.confirmAction = function({ title, text, icon = 'warning', confirmText, cancelText, onConfirm }) {
+            LuxurySwal.fire({
+                title: title || "{{ __('admin.confirm_action') }}",
+                text: text || "{{ __('admin.confirm_delete_msg') }}",
+                icon: icon,
+                showCancelButton: true,
+                confirmButtonText: confirmText || "{{ __('admin.yes_confirm') }}",
+                cancelButtonText: cancelText || "{{ __('admin.cancel') }}",
+            }).then((result) => {
+                if (result.isConfirmed && typeof onConfirm === 'function') {
+                    onConfirm();
                 }
             });
-        }
+        };
+
+        window.confirmDelete = function(formOrElement, customMsg = null, customTitle = null) {
+            let form = formOrElement;
+            if (!(form instanceof HTMLFormElement)) {
+                form = formOrElement.closest('form');
+            }
+            if (!form) return;
+
+            LuxurySwal.fire({
+                title: customTitle || "{{ __('admin.confirm_delete') }}",
+                text: customMsg || "{{ __('admin.confirm_delete_msg') }}",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: "{{ __('admin.yes_delete') }}",
+                cancelButtonText: "{{ __('admin.cancel') }}",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.dataset.confirmed = "true";
+                    form.submit();
+                }
+            });
+        };
+
+        // Universal Interceptor for All Delete Forms in Admin Panel
+        document.addEventListener('submit', function(e) {
+            const form = e.target;
+            if (!form || form.tagName !== 'FORM') return;
+
+            // Check if form is a DELETE form (has _method=DELETE or action contains destroy)
+            const methodInput = form.querySelector('input[name="_method"][value="DELETE"]');
+            const isDeleteAction = form.action && form.action.includes('destroy');
+            const hasConfirmClass = form.classList.contains('confirm-delete');
+
+            if ((methodInput || isDeleteAction || hasConfirmClass) && form.dataset.confirmed !== "true") {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+
+                const customMsg = form.getAttribute('data-confirm') || "{{ __('admin.confirm_delete_msg') }}";
+                window.confirmDelete(form, customMsg);
+                return false;
+            }
+        }, true);
 
         // Global One-Click Automatic Translation Engine (Google Translate)
         function autoTranslate(sourceId, targetId, fromLang = 'ar', toLang = 'en', btn = null) {
@@ -399,8 +446,6 @@
             if (!text) {
                 if (typeof toastr !== 'undefined') {
                     toastr.warning("{{ app()->getLocale() === 'ar' ? 'يرجى إدخال النص أولاً لترجمته' : 'Please enter source text first' }}");
-                } else {
-                    alert("{{ app()->getLocale() === 'ar' ? 'يرجى إدخال النص أولاً لترجمته' : 'Please enter source text first' }}");
                 }
                 return;
             }

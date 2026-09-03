@@ -253,11 +253,18 @@
 @push('scripts')
 <script>
     function deleteAttachment(id) {
-        if (confirm("هل أنت متأكد من حذف هذا المرفق نهائياً؟")) {
-            const form = document.getElementById('deleteAttachmentForm');
-            form.action = "{{ url('admin/portfolios/attachments') }}/" + id;
-            form.submit();
-        }
+        window.confirmAction({
+            title: "{{ __('admin.confirm_delete') }}",
+            text: "هل أنت متأكد من حذف هذا المرفق نهائياً من المشروع؟",
+            icon: 'warning',
+            confirmText: "{{ __('admin.yes_delete') }}",
+            cancelText: "{{ __('admin.cancel') }}",
+            onConfirm: function() {
+                const form = document.getElementById('deleteAttachmentForm');
+                form.action = "{{ url('admin/portfolios/attachments') }}/" + id;
+                form.submit();
+            }
+        });
     }
 </script>
 @endpush

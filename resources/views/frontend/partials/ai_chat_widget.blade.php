@@ -55,9 +55,6 @@
 
             <!-- Header Actions -->
             <div class="flex items-center gap-1 text-slate-400">
-                <button type="button" onclick="clearAiChat()" class="p-2 rounded-xl hover:bg-white/10 hover:text-white transition text-xs" title="{{ app()->getLocale() === 'ar' ? 'مسح المحادثة' : 'Clear Chat' }}">
-                    <i class="fa-solid fa-trash-can"></i>
-                </button>
                 <button type="button" onclick="if(typeof closeAiChat==='function') closeAiChat(); else { document.getElementById('aiChatWindow').classList.add('hidden'); document.getElementById('aiIconOpen')?.classList.remove('hidden'); document.getElementById('aiIconClose')?.classList.add('hidden'); }" class="p-2 rounded-xl hover:bg-rose-500/20 hover:text-rose-400 transition text-sm font-bold flex items-center justify-center w-8 h-8 rounded-lg bg-white/5 cursor-pointer" title="{{ app()->getLocale() === 'ar' ? 'إغلاق المحادثة' : 'Close' }}">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
@@ -90,26 +87,9 @@
             <!-- Injected via JavaScript -->
         </div>
 
-        <!-- Image Preview if selected -->
-        <div id="aiImagePreviewContainer" class="px-4 py-2 bg-dark-950/80 border-t border-white/10 flex items-center justify-between hidden">
-            <div class="flex items-center gap-2">
-                <img id="aiImagePreviewThumb" src="" alt="preview" class="w-10 h-10 object-cover rounded-lg border border-gold-500/40">
-                <span id="aiImagePreviewName" class="text-[11px] text-slate-300 truncate max-w-[200px]"></span>
-            </div>
-            <button onclick="removeSelectedAiImage()" class="text-rose-400 hover:text-rose-300 p-1 text-xs">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        </div>
-
         <!-- Chat Input Form -->
         <div class="p-3 bg-dark-950/90 border-t border-white/10">
             <form id="aiChatForm" onsubmit="sendAiMessage(event)" class="flex items-end gap-2">
-                <!-- File upload button -->
-                <label for="aiImageUploadInput" class="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-gold-400 cursor-pointer transition border border-white/10 flex-shrink-0" title="{{ app()->getLocale() === 'ar' ? 'إرفاق صورة أو مخطط' : 'Attach Photo/Plan' }}">
-                    <i class="fa-solid fa-paperclip text-sm"></i>
-                    <input type="file" id="aiImageUploadInput" accept="image/*" class="hidden" onchange="handleAiImageSelect(this)">
-                </label>
-
                 <!-- Textarea -->
                 <div class="flex-1 relative">
                     <textarea id="aiMessageInput" rows="1" placeholder="{{ app()->getLocale() === 'ar' ? 'اكتب سؤالك أو استفسارك هنا...' : 'Type your question or design idea...' }}"
@@ -124,7 +104,7 @@
             </form>
             <div class="flex items-center justify-between px-1 pt-1.5 text-[10px] text-slate-500">
                 <span>{{ app()->getLocale() === 'ar' ? 'مدعوم بـ Google Gemini' : 'Powered by Google Gemini' }}</span>
-                <span>{{ app()->getLocale() === 'ar' ? 'أرتيزان للأعمال الخشبية' : 'Artisan Woodwork' }}</span>
+                <span class="font-medium text-slate-400">{{ \App\Models\Setting::get('site_name_' . app()->getLocale(), (app()->getLocale() === 'ar' ? 'أرتيزان للأعمال الخشبية' : 'Artisan Woodcraft')) }}</span>
             </div>
         </div>
     </div>
@@ -301,26 +281,6 @@
         }
     }
 
-    // Image Upload Handlers
-    function handleAiImageSelect(input) {
-        if (input.files && input.files[0]) {
-            selectedAiImageFile = input.files[0];
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('aiImagePreviewThumb').src = e.target.result;
-                document.getElementById('aiImagePreviewName').textContent = selectedAiImageFile.name;
-                document.getElementById('aiImagePreviewContainer').classList.remove('hidden');
-            };
-            reader.readAsDataURL(selectedAiImageFile);
-        }
-    }
-
-    function removeSelectedAiImage() {
-        selectedAiImageFile = null;
-        document.getElementById('aiImageUploadInput').value = '';
-        document.getElementById('aiImagePreviewContainer').classList.add('hidden');
-    }
-
     // Send AI Message
     async function sendAiMessage(e) {
         e.preventDefault();
@@ -328,19 +288,15 @@
 
         const input = document.getElementById('aiMessageInput');
         const text = input.value.trim();
-        const hasImage = !!selectedAiImageFile;
 
-        if (!text && !hasImage) return;
-
-        const imageThumbSrc = hasImage ? document.getElementById('aiImagePreviewThumb').src : null;
+        if (!text) return;
 
         // Append User Message to UI
         const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        appendUserMessage(text, imageThumbSrc, nowTime);
+        appendUserMessage(text, null, nowTime);
 
-        // Reset input and attachments
+        // Reset input
         input.value = '';
-        removeSelectedAiImage();
         scrollAiToBottom();
 
         // Show Typing Indicator
@@ -350,9 +306,6 @@
         const formData = new FormData();
         formData.append('session_token', aiSessionToken);
         formData.append('message', text);
-        if (selectedAiImageFile) {
-            formData.append('image', selectedAiImageFile);
-        }
 
         try {
             const res = await fetch(AI_CHAT_ROUTES.send, {

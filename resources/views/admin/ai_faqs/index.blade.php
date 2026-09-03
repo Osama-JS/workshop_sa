@@ -124,7 +124,7 @@
                                     <a href="{{ route('admin.ai-faqs.edit', $faq) }}" class="p-2 rounded-xl bg-slate-100 hover:bg-wood-600 hover:text-white transition text-slate-600" title="تعديل">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                     </a>
-                                    <form method="POST" action="{{ route('admin.ai-faqs.destroy', $faq) }}" onsubmit="return confirm('هل أنت متأكد من حذف هذا السؤال من بنك المعرفة؟')">
+                                    <form method="POST" action="{{ route('admin.ai-faqs.destroy', $faq) }}" data-confirm="هل أنت متأكد من حذف هذا السؤال من بنك المعرفة نهائياً؟">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="p-2 rounded-xl bg-slate-100 hover:bg-rose-600 hover:text-white transition text-rose-500" title="حذف">

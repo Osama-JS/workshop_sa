@@ -128,11 +128,11 @@
                         <a href="{{ route('admin.ai-ideas.edit', $idea->id) }}" class="p-1.5 rounded-lg bg-white border border-slate-200 text-slate-600 hover:text-wood-600 hover:border-wood-600 transition text-xs" title="تعديل">
                             <i class="fa-solid fa-pen"></i>
                         </a>
-                        <form method="POST" action="{{ route('admin.ai-ideas.destroy', $idea->id) }}" onsubmit="return confirm('هل أنت متأكد من حذف فكرة التصميم هذه؟');" class="inline">
+                        <form method="POST" action="{{ route('admin.ai-ideas.destroy', $idea->id) }}" data-confirm="هل أنت متأكد من حذف فكرة التصميم هذه نهائياً؟" class="inline">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="p-1.5 rounded-lg bg-white border border-slate-200 text-slate-600 hover:text-rose-600 hover:border-rose-600 transition text-xs" title="حذف">
-                                <i class="fa-solid fa-trash-can"></i>
+                            <button type="submit" class="p-2 rounded-xl bg-slate-100 hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition text-xs" title="{{ __('admin.delete') }}">
+                                <i class="fa-solid fa-trash"></i>
                             </button>
                         </form>
                     </div>

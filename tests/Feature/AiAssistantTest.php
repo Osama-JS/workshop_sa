@@ -51,12 +51,30 @@ class AiAssistantTest extends TestCase
 
         $response = $this->postJson(route('ai.chat.send'), [
             'session_token' => $token,
-            'message' => 'أبحث عن أفكار لغرف النوم',
+            'message' => 'من أنت؟',
         ]);
 
         $response->assertStatus(200);
         $reply = $response->json('reply');
         $this->assertStringContainsString('المستشار الذكي', $reply);
+        $this->assertEmpty($response->json('suggested_ideas'));
+    }
+
+    public function test_ai_chat_answers_about_the_platform_richly_without_designs()
+    {
+        $sessionRes = $this->getJson(route('ai.chat.init'));
+        $token = $sessionRes->json('session_token');
+
+        $response = $this->postJson(route('ai.chat.send'), [
+            'session_token' => $token,
+            'message' => 'من هي منصة أرتيزان للأعمال الخشبية؟',
+        ]);
+
+        $response->assertStatus(200);
+        $reply = $response->json('reply');
+        $this->assertStringContainsString('أرتيزان للأعمال الخشبية', $reply);
+        $this->assertStringContainsString('ساعات العمل', $reply);
+        $this->assertEmpty($response->json('suggested_ideas'));
     }
 
     public function test_ai_chat_send_answers_bedroom_inquiries_with_suggested_ideas()

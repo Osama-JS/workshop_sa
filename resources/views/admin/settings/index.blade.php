@@ -1301,21 +1301,19 @@
     // Trigger SMTP Test Email with SweetAlert2 / Fetch
     function triggerTestMailModal() {
         if (typeof Swal === 'undefined') {
-            const email = prompt("{{ __('admin.test_mail_prompt') }}", "{{ auth()->user()->email }}");
-            if (email) {
-                fetch("{{ route('admin.settings.send-test-mail') }}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': "{{ csrf_token() }}",
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({ test_email: email })
-                })
-                .then(r => r.json())
-                .then(data => alert(data.message || (data.success ? 'Success' : 'Failed')))
-                .catch(e => alert('Error sending test email'));
-            }
+            const email = "{{ auth()->user()->email }}";
+            fetch("{{ route('admin.settings.send-test-mail') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ test_email: email })
+            })
+            .then(r => r.json())
+            .then(data => toastr.success(data.message || 'تم إرسال البريد بنجاح'))
+            .catch(e => toastr.error('حدث خطأ أثناء إرسال البريد'));
             return;
         }
 
