@@ -218,15 +218,15 @@
             <div class="w-16 h-1 bg-gold-500 mx-auto rounded-full"></div>
         </div>
 
-        <!-- Values Cards Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Values Cards Centered Flex Grid -->
+        <div class="flex flex-wrap justify-center gap-6">
             @foreach($valueItems as $val)
                 @php
                     $valTitle = app()->getLocale() === 'ar' ? ($val['title_ar'] ?? '') : ($val['title_en'] ?? $val['title_ar'] ?? '');
                     $valDesc = app()->getLocale() === 'ar' ? ($val['desc_ar'] ?? '') : ($val['desc_en'] ?? $val['desc_ar'] ?? '');
                     $valIcon = $val['icon'] ?? 'fa-solid fa-gem';
                 @endphp
-                <div class="glass-card rounded-3xl p-7 flex flex-col justify-between border-white/10 hover:border-gold-500/40 transition-all duration-300 group hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-gold-500/10">
+                <div class="glass-card rounded-3xl p-7 flex flex-col justify-between border-white/10 hover:border-gold-500/40 transition-all duration-300 group hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-gold-500/10 w-full sm:w-[calc(50%-0.85rem)] lg:w-[calc(25%-1.25rem)] max-w-sm">
                     <div class="space-y-4">
                         <!-- Icon Circle with Glowing Accent -->
                         <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-wood-800 to-dark-950 border border-gold-500/40 text-gold-400 flex items-center justify-center text-2xl shadow-lg shadow-gold-500/10 group-hover:scale-110 group-hover:border-gold-400 group-hover:text-gold-300 transition-all duration-300">
@@ -244,10 +244,9 @@
                         </p>
                     </div>
 
-                    <!-- Bottom Accent Bar -->
-                    <div class="pt-4 mt-4 border-t border-white/5 flex items-center justify-between">
-                        <span class="w-2 h-2 rounded-full bg-gold-500/60 group-hover:scale-150 transition-transform"></span>
-                        <i class="fa-solid fa-arrow-left text-[11px] text-slate-600 group-hover:text-gold-400 group-hover:-translate-x-1 transition-all"></i>
+                    <!-- Subtle Bottom Luxury Line Indicator (No Arrow) -->
+                    <div class="pt-4 mt-4 border-t border-white/5 flex items-center justify-center">
+                        <span class="w-10 h-1 rounded-full bg-gold-500/30 group-hover:bg-gold-500/80 group-hover:w-20 transition-all duration-300"></span>
                     </div>
                 </div>
             @endforeach
@@ -255,7 +254,7 @@
     </div>
 
     <!-- =========================================================================
-         SECTION 5: MILESTONES & NUMBERS (الأرقام والإنجازات القياسية)
+         SECTION 5: MILESTONES & NUMBERS (الأرقام والإنجازات القياسية - توسيط من المنتصف)
          ========================================================================= -->
     @php
         $counters = $stats?->meta_data ?: [
@@ -267,9 +266,9 @@
     @endphp
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-6">
+        <div class="flex flex-wrap justify-center gap-6">
             @foreach($counters as $c)
-                <div class="glass-card p-6 sm:p-8 rounded-3xl text-center space-y-2 border-white/10 hover:border-gold-500/30 transition-all">
+                <div class="glass-card p-6 sm:p-8 rounded-3xl text-center space-y-2 border-white/10 hover:border-gold-500/30 transition-all w-full sm:w-[calc(50%-0.85rem)] lg:w-[calc(25%-1.25rem)] max-w-xs">
                     <span class="text-3xl sm:text-5xl font-black text-gold-gradient block font-mono tracking-tight">
                         {{ $c['number'] ?? '' }}
                     </span>

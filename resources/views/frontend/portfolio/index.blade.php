@@ -33,10 +33,10 @@
             @endforeach
         </div>
 
-        <!-- Projects Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Projects Centered Flex Grid -->
+        <div class="flex flex-wrap justify-center gap-8">
             @forelse($portfolios as $item)
-                <div class="glass-card rounded-3xl overflow-hidden group hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between">
+                <div class="glass-card rounded-3xl overflow-hidden group hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between w-full md:w-[calc(50%-1.25rem)] lg:w-[calc(33.333%-1.5rem)] max-w-sm">
                     <div>
                         <!-- Cover Image -->
                         <div class="h-60 relative overflow-hidden bg-dark-950">
@@ -96,7 +96,7 @@
                     </div>
                 </div>
             @empty
-                <div class="col-span-full text-center py-16 text-slate-500 text-xs">
+                <div class="w-full text-center py-16 text-slate-500 text-xs">
                     {{ app()->getLocale() === 'ar' ? 'لا توجد مشاريع مضافة في هذا القسم' : 'No projects found in this category.' }}
                 </div>
             @endforelse

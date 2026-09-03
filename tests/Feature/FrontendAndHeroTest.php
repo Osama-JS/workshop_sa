@@ -26,6 +26,38 @@ class FrontendAndHeroTest extends TestCase
         $response->assertSee('خدمات وأعمال النجارة المخصصة');
     }
 
+    public function test_homepage_only_shows_featured_services(): void
+    {
+        $featuredService = Service::create([
+            'title_ar' => 'خدمة مميزة خاصة',
+            'title_en' => 'Special Featured Service',
+            'slug' => 'special-featured-service',
+            'is_active' => true,
+            'is_featured' => true,
+            'sort_order' => 1,
+        ]);
+
+        $nonFeaturedService = Service::create([
+            'title_ar' => 'خدمة عادية غير مميزة',
+            'title_en' => 'Regular Non-Featured Service',
+            'slug' => 'regular-non-featured-service',
+            'is_active' => true,
+            'is_featured' => false,
+            'sort_order' => 2,
+        ]);
+
+        $res = $this->withSession(['locale' => 'ar'])->get('/');
+        $res->assertStatus(200);
+        $res->assertSee('خدمة مميزة خاصة');
+        $res->assertDontSee('خدمة عادية غير مميزة');
+
+        // But in /services page, both should appear
+        $servicesPage = $this->withSession(['locale' => 'ar'])->get(route('services.index'));
+        $servicesPage->assertStatus(200);
+        $servicesPage->assertSee('خدمة مميزة خاصة');
+        $servicesPage->assertSee('خدمة عادية غير مميزة');
+    }
+
     public function test_hero_slider_and_video_mode_switching(): void
     {
         // 1. Slider mode

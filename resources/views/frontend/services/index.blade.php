@@ -21,9 +21,9 @@
 <!-- Services Grid -->
 <div class="py-20 bg-dark-900">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="flex flex-wrap justify-center gap-8">
             @forelse($services as $service)
-                <div class="glass-card rounded-3xl overflow-hidden group hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between">
+                <div class="glass-card rounded-3xl overflow-hidden group hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between w-full md:w-[calc(50%-1.25rem)] lg:w-[calc(33.333%-1.5rem)] max-w-sm">
                     <div>
                         <!-- Image & Icon -->
                         <div class="h-60 relative overflow-hidden bg-dark-950">
@@ -65,7 +65,7 @@
                     </div>
                 </div>
             @empty
-                <div class="col-span-full text-center py-12 text-slate-500 text-xs">
+                <div class="w-full text-center py-12 text-slate-500 text-xs">
                     {{ app()->getLocale() === 'ar' ? 'لا توجد خدمات متاحة حالياً' : 'No services available at the moment.' }}
                 </div>
             @endforelse

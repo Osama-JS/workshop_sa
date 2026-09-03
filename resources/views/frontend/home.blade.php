@@ -175,10 +175,10 @@
             </p>
         </div>
 
-        <!-- Services Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Services Grid (Centered from Middle) -->
+        <div class="flex flex-wrap justify-center gap-8">
             @forelse($services as $service)
-                <div class="glass-card rounded-3xl overflow-hidden group hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between">
+                <div class="glass-card rounded-3xl overflow-hidden group hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between w-full md:w-[calc(50%-1.25rem)] lg:w-[calc(33.333%-1.5rem)] max-w-sm">
                     <div>
                         <!-- Image & Icon -->
                         <div class="h-56 relative overflow-hidden bg-dark-950">
@@ -220,7 +220,7 @@
                     </div>
                 </div>
             @empty
-                <div class="col-span-full text-center py-12 text-slate-500 text-xs">
+                <div class="w-full text-center py-12 text-slate-500 text-xs">
                     {{ app()->getLocale() === 'ar' ? 'سيتم إضافة الخدمات قريباً' : 'Services will be added soon.' }}
                 </div>
             @endforelse
@@ -252,10 +252,10 @@
             </div>
         </div>
 
-        <!-- Projects Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Projects Centered Flex Grid -->
+        <div class="flex flex-wrap justify-center gap-6">
             @forelse($featuredPortfolios as $item)
-                <div class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 transition duration-300 flex flex-col justify-between">
+                <div class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 transition duration-300 flex flex-col justify-between w-full sm:w-[calc(50%-0.85rem)] lg:w-[calc(25%-1.25rem)] max-w-sm">
                     <div>
                         <!-- Cover Image -->
                         <div class="h-48 relative overflow-hidden bg-dark-900">
@@ -371,9 +371,9 @@
                     ];
                 @endphp
 
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div class="flex flex-wrap justify-center gap-4">
                     @foreach($counters as $c)
-                        <div class="glass-card p-4 rounded-2xl text-center space-y-1">
+                        <div class="glass-card p-4 rounded-2xl text-center space-y-1 w-[calc(50%-0.6rem)] sm:w-[calc(25%-0.85rem)] max-w-[160px]">
                             <span class="text-2xl sm:text-3xl font-black text-gold-gradient block font-mono">
                                 {{ $c['number'] ?? '' }}
                             </span>
@@ -405,10 +405,10 @@
             <div class="w-16 h-1 bg-gold-500 mx-auto rounded-full"></div>
         </div>
 
-        <!-- Testimonials Cards Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Testimonials Cards Centered Grid -->
+        <div class="flex flex-wrap justify-center gap-8">
             @foreach($testimonials->take(3) as $t)
-                <div class="glass-card rounded-3xl p-8 space-y-6 relative flex flex-col justify-between">
+                <div class="glass-card rounded-3xl p-8 space-y-6 relative flex flex-col justify-between w-full md:w-[calc(50%-1.25rem)] lg:w-[calc(33.333%-1.5rem)] max-w-md">
                     <div class="space-y-4">
                         <!-- Rating Stars -->
                         <div class="flex items-center gap-1 text-gold-500 text-sm">
