@@ -19,6 +19,46 @@ use Illuminate\Support\Facades\Route;
 Route::get('locale/{locale}', [LocaleController::class, 'switch'])->name('locale.switch');
 Route::get('lang/{locale}', [LocaleController::class, 'switch']);
 
+// One-Click Storage Link Generator for cPanel / Shared Hostings (Auto-replaces broken links)
+Route::get('/storage-link', function () {
+    $link = public_path('storage');
+    $target = storage_path('app/public');
+
+    // If link already exists (often broken from previous OS/upload), remove it safely
+    if (file_exists($link) || is_link($link)) {
+        if (is_link($link)) {
+            @unlink($link);
+        } elseif (is_dir($link)) {
+            // Check if it's an empty folder
+            $files = @scandir($link);
+            if (count($files) <= 2) {
+                @rmdir($link);
+            }
+        }
+    }
+
+    try {
+        \Illuminate\Support\Facades\Artisan::call('storage:link');
+        $output = trim(\Illuminate\Support\Facades\Artisan::output());
+        return response("<div style='font-family:sans-serif;padding:40px;text-align:center;direction:rtl;'>
+            <h2 style='color:#16a34a;'>✅ تم تجديد وإنشاء رابط التخزين بنجاح!</h2>
+            <p style='color:#64748b;'>{$output}</p>
+            <br><a href='/' style='display:inline-block;padding:10px 24px;background:#b88b64;color:#fff;border-radius:12px;text-decoration:none;font-weight:bold;'>العودة إلى الموقع</a>
+        </div>");
+    } catch (\Throwable $e) {
+        if (function_exists('symlink')) {
+            @symlink($target, $link);
+            return response("<div style='font-family:sans-serif;padding:40px;text-align:center;direction:rtl;'>
+                <h2 style='color:#16a34a;'>✅ تم إنشاء الرابط الرمزي بواسطة PHP بنجاح!</h2>
+                <br><a href='/' style='display:inline-block;padding:10px 24px;background:#b88b64;color:#fff;border-radius:12px;text-decoration:none;font-weight:bold;'>العودة إلى الموقع</a>
+            </div>");
+        }
+        return response("<div style='font-family:sans-serif;padding:40px;text-align:center;direction:rtl;'>
+            <h2 style='color:#dc2626;'>⚠️ خطأ: " . $e->getMessage() . "</h2>
+        </div>", 500);
+    }
+});
+
 // Public Frontend Routes
 Route::get('/', [\App\Http\Controllers\Frontend\HomeController::class, 'index'])->name('home');
 Route::get('/services', [\App\Http\Controllers\Frontend\ServiceController::class, 'index'])->name('services.index');
