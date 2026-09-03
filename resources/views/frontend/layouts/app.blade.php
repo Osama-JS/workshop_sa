@@ -413,6 +413,19 @@
         .text-gold-400, .text-gold-500, .text-gold-300 {
             color: var(--accent-color) !important;
         }
+
+        /* Utility: Hide Scrollbar Across All Browsers */
+        .no-scrollbar::-webkit-scrollbar,
+        #testimonialsTrack::-webkit-scrollbar {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+        }
+        .no-scrollbar,
+        #testimonialsTrack {
+            -ms-overflow-style: none !important;
+            scrollbar-width: none !important;
+        }
         .text-wood-500, .text-wood-600, .text-wood-400, .text-wood-700 {
             color: var(--primary-color) !important;
         }

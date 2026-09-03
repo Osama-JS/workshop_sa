@@ -389,51 +389,90 @@
 </section>
 
 <!-- ==========================================
-     5. TESTIMONIALS SECTION
+<!-- ==========================================
+     5. TESTIMONIALS SECTION (Horizontal Carousel)
      ========================================== -->
 @if($testimonials->count() > 0)
-<section id="testimonials" class="py-24 bg-dark-950 relative border-t border-white/5">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Section Header -->
-        <div class="text-center max-w-2xl mx-auto space-y-3 mb-16">
-            <span class="text-xs font-bold uppercase tracking-widest text-gold-500 block">
-                {{ app()->getLocale() === 'ar' ? 'شركاء النجاح' : 'Client Testimonials' }}
-            </span>
-            <h2 class="text-3xl sm:text-4xl font-black text-white tracking-tight">
-                {{ app()->getLocale() === 'ar' ? 'ماذا يقول عملاؤنا عن جودة أعمالنا' : 'What Our Valued Clients Say' }}
-            </h2>
-            <div class="w-16 h-1 bg-gold-500 mx-auto rounded-full"></div>
+<section id="testimonials" class="py-24 bg-dark-950 relative border-t border-white/5 overflow-hidden">
+    <!-- Subtle Background Glow -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-gold-500/5 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <!-- Section Header with Slider Controls -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+            <div class="space-y-3 max-w-xl">
+                <span class="text-xs font-bold uppercase tracking-widest text-gold-500 block">
+                    {{ app()->getLocale() === 'ar' ? 'شركاء النجاح والثقة' : 'Client Testimonials' }}
+                </span>
+                <h2 class="text-3xl sm:text-4xl font-black text-white tracking-tight leading-tight">
+                    {{ app()->getLocale() === 'ar' ? 'ماذا يقول عملاؤنا عن دقة وفخامة أعمالنا' : 'What Our Valued Clients Say' }}
+                </h2>
+                <div class="w-16 h-1 bg-gold-500 rounded-full"></div>
+            </div>
+
+            <!-- Slider Navigation Controls -->
+            <div class="flex items-center gap-3 self-end md:self-auto">
+                <button type="button" onclick="scrollTestimonials(-1)" class="w-11 h-11 rounded-2xl bg-white/5 hover:bg-gold-500 text-slate-300 hover:text-slate-950 border border-white/10 hover:border-gold-500 flex items-center justify-center transition-all duration-300 shadow-lg active:scale-95 cursor-pointer group" title="{{ app()->getLocale() === 'ar' ? 'السابق' : 'Previous' }}">
+                    <i class="fa-solid fa-arrow-right rtl:rotate-0 ltr:rotate-180 transition-transform group-hover:-translate-x-0.5"></i>
+                </button>
+                <button type="button" onclick="scrollTestimonials(1)" class="w-11 h-11 rounded-2xl bg-white/5 hover:bg-gold-500 text-slate-300 hover:text-slate-950 border border-white/10 hover:border-gold-500 flex items-center justify-center transition-all duration-300 shadow-lg active:scale-95 cursor-pointer group" title="{{ app()->getLocale() === 'ar' ? 'التالي' : 'Next' }}">
+                    <i class="fa-solid fa-arrow-left rtl:rotate-0 ltr:rotate-180 transition-transform group-hover:translate-x-0.5"></i>
+                </button>
+            </div>
         </div>
 
-        <!-- Testimonials Cards Centered Grid -->
-        <div class="flex flex-wrap justify-center gap-8">
-            @foreach($testimonials->take(3) as $t)
-                <div class="glass-card rounded-3xl p-8 space-y-6 relative flex flex-col justify-between w-full md:w-[calc(50%-1.25rem)] lg:w-[calc(33.333%-1.5rem)] max-w-md">
-                    <div class="space-y-4">
-                        <!-- Rating Stars -->
-                        <div class="flex items-center gap-1 text-gold-500 text-sm">
-                            @for($i = 1; $i <= 5; $i++)
-                                <i class="fa-{{ $i <= $t->rating ? 'solid' : 'regular' }} fa-star"></i>
-                            @endfor
-                        </div>
+        <!-- Horizontal Scrollable Track Container -->
+        <div class="relative">
+            <!-- Left Gradient Fade Mask -->
+            <div class="hidden md:block absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-dark-950 to-transparent z-10 pointer-events-none"></div>
+            <!-- Right Gradient Fade Mask -->
+            <div class="hidden md:block absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-dark-950 to-transparent z-10 pointer-events-none"></div>
 
-                        <!-- Quote Text -->
-                        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed italic">
-                            "{{ $t->comment }}"
-                        </p>
-                    </div>
+            <div id="testimonialsTrack" class="flex gap-6 overflow-x-auto no-scrollbar scroll-smooth py-4 px-1 snap-x snap-mandatory cursor-grab active:cursor-grabbing" style="scrollbar-width: none; -ms-overflow-style: none;">
+                @foreach($testimonials as $t)
+                    <div class="glass-card rounded-3xl p-7 relative flex flex-col justify-between w-[310px] sm:w-[380px] lg:w-[410px] shrink-0 snap-start border border-white/10 hover:border-gold-500/50 hover:shadow-xl hover:shadow-gold-500/5 transition-all duration-300 group">
+                        <!-- Watermark Quote Icon -->
+                        <i class="fa-solid fa-quote-left absolute top-6 end-6 text-3xl text-gold-500/10 group-hover:text-gold-500/20 transition-colors"></i>
 
-                    <!-- Client Info -->
-                    <div class="flex items-center gap-3 pt-4 border-t border-white/5">
-                        <img src="{{ $t->avatar_url }}" alt="{{ $t->client_name }}" class="w-12 h-12 rounded-full object-cover ring-2 ring-gold-500/30">
-                        <div>
-                            <h4 class="font-bold text-white text-sm">{{ $t->client_name }}</h4>
-                            <p class="text-[11px] text-gold-400">
-                                {{ $t->position }} {{ $t->company ? ' - ' . $t->company : '' }}
+                        <div class="space-y-4">
+                            <!-- Rating Stars & Verified Tag -->
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-1 text-gold-500 text-sm">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <i class="fa-{{ $i <= $t->rating ? 'solid' : 'regular' }} fa-star"></i>
+                                    @endfor
+                                </div>
+                                <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20 flex items-center gap-1 font-bold">
+                                    <i class="fa-solid fa-circle-check text-[9px]"></i>
+                                    <span>{{ app()->getLocale() === 'ar' ? 'رأي موثق' : 'Verified' }}</span>
+                                </span>
+                            </div>
+
+                            <!-- Comment Text -->
+                            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed italic line-clamp-4 group-hover:text-white transition-colors">
+                                "{{ $t->comment }}"
                             </p>
                         </div>
+
+                        <!-- Client Info -->
+                        <div class="flex items-center gap-3.5 pt-5 mt-4 border-t border-white/5">
+                            <img src="{{ $t->avatar_url }}" alt="{{ $t->client_name }}" class="w-12 h-12 rounded-full object-cover ring-2 ring-gold-500/30 group-hover:ring-gold-500 transition-all flex-shrink-0">
+                            <div class="overflow-hidden">
+                                <h4 class="font-bold text-white text-sm truncate">{{ $t->client_name }}</h4>
+                                <p class="text-[11px] text-gold-400 font-medium truncate">
+                                    {{ $t->position }} {{ $t->company ? ' - ' . $t->company : '' }}
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                @endforeach
+            </div>
+        </div>
+
+        <!-- Carousel Dots / Progress Indicator -->
+        <div id="testimonialsDots" class="flex items-center justify-center gap-2 mt-8">
+            @foreach($testimonials as $idx => $t)
+                <button type="button" onclick="scrollTestimonialsToIndex({{ $idx }})" class="testimonial-dot h-2 rounded-full transition-all duration-300 {{ $idx === 0 ? 'w-8 bg-gold-500' : 'w-2 bg-white/20 hover:bg-white/40' }}" title="{{ $t->client_name }}"></button>
             @endforeach
         </div>
     </div>
@@ -548,6 +587,127 @@
             carousel.addEventListener('mouseenter', () => clearInterval(slideInterval));
             carousel.addEventListener('mouseleave', () => startSlideTimer());
         }
+
+        initTestimonialsSlider();
     });
+
+    /* =========================================================================
+       TESTIMONIALS HORIZONTAL SLIDER CONTROLLER
+       ========================================================================= */
+    let testimonialAutoPlayInterval = null;
+
+    function getCardStepWidth() {
+        const track = document.getElementById('testimonialsTrack');
+        if (!track) return 350;
+        const firstCard = track.querySelector('.glass-card');
+        return firstCard ? firstCard.offsetWidth + 24 : 350;
+    }
+
+    function scrollTestimonials(direction) {
+        const track = document.getElementById('testimonialsTrack');
+        if (!track) return;
+        const step = getCardStepWidth() * direction;
+        // Check RTL direction
+        const isRtl = document.documentElement.dir === 'rtl' || document.documentElement.lang === 'ar';
+        const scrollAmount = isRtl ? -step : step;
+        
+        track.scrollBy({
+            left: scrollAmount,
+            behavior: 'smooth'
+        });
+        restartTestimonialAutoPlay();
+    }
+
+    function scrollTestimonialsToIndex(index) {
+        const track = document.getElementById('testimonialsTrack');
+        if (!track) return;
+        const cards = track.querySelectorAll('.glass-card');
+        if (cards[index]) {
+            cards[index].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            updateTestimonialDots(index);
+        }
+        restartTestimonialAutoPlay();
+    }
+
+    function updateTestimonialDots(activeIndex) {
+        const dots = document.querySelectorAll('.testimonial-dot');
+        dots.forEach((dot, idx) => {
+            if (idx === activeIndex) {
+                dot.classList.add('w-8', 'bg-gold-500');
+                dot.classList.remove('w-2', 'bg-white/20');
+            } else {
+                dot.classList.remove('w-8', 'bg-gold-500');
+                dot.classList.add('w-2', 'bg-white/20');
+            }
+        });
+    }
+
+    function initTestimonialsSlider() {
+        const track = document.getElementById('testimonialsTrack');
+        if (!track) return;
+
+        // Auto update active dot on scroll
+        track.addEventListener('scroll', () => {
+            const cards = track.querySelectorAll('.glass-card');
+            const trackRect = track.getBoundingClientRect();
+            let closestIdx = 0;
+            let minDistance = Infinity;
+
+            cards.forEach((card, idx) => {
+                const cardRect = card.getBoundingClientRect();
+                const distance = Math.abs((cardRect.left + cardRect.width / 2) - (trackRect.left + trackRect.width / 2));
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestIdx = idx;
+                }
+            });
+
+            updateTestimonialDots(closestIdx);
+        }, { passive: true });
+
+        // Auto-play horizontal scroll
+        function startAutoPlay() {
+            if (track.children.length > 1) {
+                testimonialAutoPlayInterval = setInterval(() => {
+                    const isRtl = document.documentElement.dir === 'rtl' || document.documentElement.lang === 'ar';
+                    const maxScroll = track.scrollWidth - track.clientWidth;
+                    const atEnd = Math.abs(track.scrollLeft) >= maxScroll - 20;
+
+                    if (atEnd) {
+                        track.scrollTo({ left: 0, behavior: 'smooth' });
+                    } else {
+                        const step = getCardStepWidth();
+                        track.scrollBy({ left: isRtl ? -step : step, behavior: 'smooth' });
+                    }
+                }, 4500);
+            }
+        }
+
+        startAutoPlay();
+
+        track.addEventListener('mouseenter', () => clearInterval(testimonialAutoPlayInterval));
+        track.addEventListener('mouseleave', () => startAutoPlay());
+        track.addEventListener('touchstart', () => clearInterval(testimonialAutoPlayInterval), { passive: true });
+        track.addEventListener('touchend', () => startAutoPlay(), { passive: true });
+    }
+
+    function restartTestimonialAutoPlay() {
+        clearInterval(testimonialAutoPlayInterval);
+        const track = document.getElementById('testimonialsTrack');
+        if (track && track.children.length > 1) {
+            testimonialAutoPlayInterval = setInterval(() => {
+                const isRtl = document.documentElement.dir === 'rtl' || document.documentElement.lang === 'ar';
+                const maxScroll = track.scrollWidth - track.clientWidth;
+                const atEnd = Math.abs(track.scrollLeft) >= maxScroll - 20;
+
+                if (atEnd) {
+                    track.scrollTo({ left: 0, behavior: 'smooth' });
+                } else {
+                    const step = getCardStepWidth();
+                    track.scrollBy({ left: isRtl ? -step : step, behavior: 'smooth' });
+                }
+            }, 4500);
+        }
+    }
 </script>
 @endpush
