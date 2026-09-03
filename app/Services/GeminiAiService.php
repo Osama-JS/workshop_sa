@@ -43,7 +43,7 @@ class GeminiAiService
         $isFirstAssistantMessage = $session->messages()->where('sender', 'assistant')->count() === 0;
 
         // 3. Build system instructions with live workshop knowledge, strict guardrails, and conversation memory
-        $systemInstruction = $this->buildSystemInstruction($trackingOrderInfo, $isFirstAssistantMessage);
+        $systemInstruction = $this->buildSystemInstruction($session, $trackingOrderInfo, $isFirstAssistantMessage);
 
         // 4. Build properly formatted alternating conversation contents array
         $contents = $this->buildConversationContents($session);
@@ -94,7 +94,7 @@ class GeminiAiService
     /**
      * Build system instructions embedding workshop knowledge, Q&A bank, and strict guardrails.
      */
-    protected function buildSystemInstruction(?string $trackingOrderInfo = null, bool $isFirstMessage = false): string
+    protected function buildSystemInstruction(AiChatSession $session, ?string $trackingOrderInfo = null, bool $isFirstMessage = false): string
     {
         $siteName = Setting::get("site_name_{$this->locale}", ($this->locale === 'ar' ? 'أرتيزان للأعمال الخشبية' : 'Artisan Woodcraft'));
         $siteSlogan = Setting::get("site_slogan_{$this->locale}", ($this->locale === 'ar' ? 'للأعمال الخشبية الفاخرة' : 'Luxury Bespoke Woodcraft'));
@@ -133,6 +133,8 @@ class GeminiAiService
         $workingHours = Setting::get("working_hours_{$this->locale}", 'السبت - الخميس: 9:00 ص - 10:00 م');
         $address = Setting::get("address_{$this->locale}", 'المملكة العربية السعودية');
 
+        $knownUserName = $session->user_name ? "اسم العميل المسجل في هذه الجلسة: {$session->user_name}\n" : "";
+
         $prompt = "{$basePrompt}\n\n";
         $prompt .= "=== الهوية الرسمية للمنصة ===\n";
         $prompt .= "اسم المنصة الرسمي: {$siteName}\n";
@@ -140,7 +142,8 @@ class GeminiAiService
         $prompt .= "اسمك: {$botName}\n";
         $prompt .= "وظيفتك: {$botRole}\n";
         $prompt .= "بيانات التواصل: الهاتف: {$phone} | واتساب: {$whatsapp} | البريد: {$email}\n";
-        $prompt .= "ساعات العمل: {$workingHours} | العنوان: {$address}\n\n";
+        $prompt .= "ساعات العمل: {$workingHours} | العنوان: {$address}\n";
+        $prompt .= "{$knownUserName}\n";
 
         $prompt .= "=== نبذة عن المنصة (About Us) ===\n{$aboutText}\n\n";
         $prompt .= "=== خدمات وأعمال المنصة المتاحة ===\n{$services}\n\n";
@@ -152,13 +155,14 @@ class GeminiAiService
         }
 
         $prompt .= "=== قواعد المحادثة المستمرة والحماية الصارمة (CONVERSATIONAL CONTINUITY & STRICT RULES) ===\n";
-        $prompt .= "1. أنت في محادثة حية ومستمرة مع العميل. يجب عليك قراءة وفهم كل رسائل المحادثة السابقة بدقة، ومواصلة النقاش مع العميل بسلاسة بناءً على ما ذكره سابقاً (مثل نوع العمل، المقاسات، نوع الخشب، تفاصيل طلبه).\n";
-        $prompt .= "2. إذا سألك العميل سؤالاً تكميلياً (مثل: كم سعره؟، هل يوجد مقاس أصغر؟، ما هي الألوان؟، كيف أطلبه؟)، أجب عليه مباشرة مع ربط إجابتك بالتصميم أو الموضوع الذي كان يتحدث عنه في الرسائل السابقة.\n";
-        $prompt .= "3. إذا سألك العميل 'من أنت؟' أو 'عرفني بنفسك'، أجب بتعريف احترافي عن نفسك ووظيفتك وإمكانياتك في مساعدة العميل، دون إدراج بطاقات تصاميم إلا إذا طلب هو ذلك.\n";
-        $prompt .= "4. إذا سألك العميل عن المنصة أو اسمها 'من هي {$siteName}؟' أو 'من أنتم؟' أو 'نبذة عن الورشة'، قدم نبذة وافية وراقية تشمل اختصاصات المنصة، جودتها، عنوانها، ورقم التواصل، دون إدراج بطاقات تصاميم إلا إذا طلب ذلك.\n";
-        $prompt .= "5. لا تقم بإدراج بطاقات التصاميم [DESIGN_CARD:id] إطلاقاً إلا إذا طلب العميل صراحةً رؤية تصاميم أو صور أو أفكار أو نماذج ملهمة (مثل: أريد تصاميم، اقترح علي أفكار، اعرض نماذج، صور غرف نوم).\n";
-        $prompt .= "6. ممنوع منعاً باتاً الإجابة عن أي موضوع عام خارج نطاق المنصة (مثل: البرمجة، السياسة، الرياضة، الطبخ، الأفلام، الطقس، الأسئلة العامة غير المتعلقة بالأخشاب والأثاث والورشة). إذا سألك المستخدم عن أي موضوع خارج نطاق المنصة، يجب أن تعتذر له بلباقة وتخبره بأن هذا خارج اختصاصك، وأنك مخصص حصرياً للمساعدة في خدمات وأعمال \"{$siteName}\".\n";
-        $prompt .= "7. عندما يبدي العميل رغبته في تفصيل تصميم أو طلب تسعيرة ويزودك ببياناته (الاسم ورقم الجوال والمقاسات)، قم بتأكيد استلام الطلب وأدرج كود إنشاء الطلب في نهاية إجابتك بهذه الصيغة بدقة:\n";
+        $prompt .= "1. أنت في محادثة حية ومستمرة مع العميل. اقرأ كامل الرسائل السابقة وتابع النقاش بسلاسة وذكاء دون إعادة الترحيب الرسمي في كل رسالة.\n";
+        $prompt .= "2. إذا ذكر العميل اسمه، رحب به باسمه وتذكره وخاطبه به في ردودك القادمة.\n";
+        $prompt .= "3. إذا سألك العميل سؤالاً تكميلياً (مثل: كم سعره؟، هل يوجد مقاس أصغر؟، ما هي الألوان؟، كيف أطلبه؟)، أجب عليه مباشرة مع ربط إجابتك بالتصميم أو الموضوع الذي كان يتحدث عنه في الرسائل السابقة.\n";
+        $prompt .= "4. إذا سألك العميل 'من أنت؟' أو 'عرفني بنفسك'، أجب بتعريف احترافي عن نفسك ووظيفتك وإمكانياتك في مساعدة العميل، دون إدراج بطاقات تصاميم إلا إذا طلب هو ذلك.\n";
+        $prompt .= "5. إذا سألك العميل عن المنصة أو اسمها 'من هي {$siteName}؟' أو 'من أنتم؟' أو 'نبذة عن الورشة'، قدم نبذة وافية وراقية تشمل اختصاصات المنصة، جودتها، عنوانها، ورقم التواصل، دون إدراج بطاقات تصاميم إلا إذا طلب ذلك.\n";
+        $prompt .= "6. لا تقم بإدراج بطاقات التصاميم [DESIGN_CARD:id] إطلاقاً إلا إذا طلب العميل صراحةً رؤية تصاميم أو صور أو أفكار أو نماذج ملهمة.\n";
+        $prompt .= "7. ممنوع منعاً باتاً الإجابة عن أي موضوع عام خارج نطاق المنصة (مثل: البرمجة، السياسة، الرياضة، الطبخ، الأفلام، الطقس). إذا سألك المستخدم عن أي موضوع خارج نطاق المنصة، اعتذر له بلباقة واذكر اختصاصك في منصة \"{$siteName}\".\n";
+        $prompt .= "8. عندما يبدي العميل رغبته في تفصيل تصميم أو طلب تسعيرة ويزودك ببياناته (الاسم ورقم الجوال والمقاسات)، قم بتأكيد استلام الطلب وأدرج كود إنشاء الطلب في نهاية إجابتك بهذه الصيغة بدقة:\n";
         $prompt .= "[ACTION:CREATE_ORDER|name=اسم_العميل|phone=رقم_الجوال|category=نوع_العمل|wood=نوع_الخشب|dimensions=المقاسات|notes=الملاحظات]\n";
 
         return $prompt;
@@ -337,9 +341,22 @@ class GeminiAiService
         $cleanMsg = preg_replace('/[^\p{L}\p{N}\s]/u', '', $msgLower);
 
         // Previous conversation messages context
-        $previousMessages = $session->messages()->orderBy('created_at', 'desc')->take(6)->get();
+        $previousMessages = $session->messages()->orderBy('created_at', 'desc')->take(8)->get();
+        $assistantMessagesCount = $session->messages()->where('sender', 'assistant')->count();
         $recentAssistantMsg = $previousMessages->firstWhere('sender', 'assistant')?->message ?? '';
         $recentAssistantLower = mb_strtolower($recentAssistantMsg);
+
+        // Extract user name if mentioned in current message
+        if (preg_match('/(?:اسمي|أنا|انا|معك|معاك|الاسم)\s+([^\d,،\.\n!\?]+)/u', $userMessage, $nameMatches)) {
+            $extracted = trim($nameMatches[1]);
+            // Clean title prefixes like المهندس / الاستاذ
+            $extracted = preg_replace('/^(المهندس|المهندسة|الاستاذ|الأستاذ|دكتور|الدكتور|الشيخ)\s+/u', '', $extracted);
+            if (mb_strlen($extracted) >= 2 && mb_strlen($extracted) <= 30) {
+                $session->update(['user_name' => $extracted]);
+            }
+        }
+
+        $userName = $session->user_name ? "أستاذ " . $session->user_name : (app()->getLocale() === 'ar' ? 'يا غالي' : 'Dear Customer');
 
         // Check if user explicitly asked for designs/ideas/pictures
         $isAskingForDesigns = str_contains($msgLower, 'تصميم') || str_contains($msgLower, 'أفكار') || 
@@ -367,7 +384,7 @@ class GeminiAiService
         foreach ($offTopicWords as $word) {
             if (str_contains($msgLower, $word)) {
                 $refusal = $this->locale === 'ar'
-                    ? "أهلاً بك يا غالي! أعتذر منك، أنا مستشار ذكي متخصص حصرياً في **الأعمال الخشبية الفاخرة، تفصيل غرف النوم، المكاتب التنفيذية، بوثات المعارض، والديكورات** الخاصة بمنصة **{$siteName}**.\n\nيسعدني جداً الإجابة على أي استفسار يخص خدماتنا أو مساعدتك في تفصيل طلبك الخشبي!"
+                    ? "أهلاً بك {$userName}! أعتذر منك، أنا مستشار ذكي متخصص حصرياً في **الأعمال الخشبية الفاخرة، تفصيل غرف النوم، المكاتب التنفيذية، بوثات المعارض، والديكورات** الخاصة بمنصة **{$siteName}**.\n\nيسعدني جداً الإجابة على أي استفسار يخص خدماتنا أو مساعدتك في تفصيل طلبك الخشبي!"
                     : "Hello! I apologize, but I am an AI consultant specialized exclusively in **bespoke woodwork, luxury bedrooms, executive offices, exhibition booths, and custom joinery** for **{$siteName}**.\n\nI would be delighted to assist you with any questions about our woodwork services!";
                 return [
                     'reply' => $refusal,
@@ -377,7 +394,7 @@ class GeminiAiService
             }
         }
 
-        // 3. User Asking "Who are you?" ("من أنت؟", "عرفني بنفسك", "ما هي وظيقتك")
+        // 3. User Asking "Who are you?" ("من أنت؟", "عرفني بنفسك", "ما هي وظيفتك")
         if (str_contains($cleanMsg, 'من انت') || str_contains($cleanMsg, 'من أنت') || 
             str_contains($cleanMsg, 'عرفني عن نفسك') || str_contains($cleanMsg, 'عرفني بنفسك') || 
             str_contains($cleanMsg, 'ما هي وظيفتك') || str_contains($cleanMsg, 'ما وظيفتك') || 
@@ -427,13 +444,18 @@ class GeminiAiService
             return ['reply' => $reply, 'order' => null, 'suggested_ideas' => []];
         }
 
-        // 5. Contextual Continuity: Order Registration follow-up (User providing name/phone or requesting execution)
+        // 5. User Introducing their Name ("اسمي فلان", "أنا فلان", "معك فلان")
+        if (preg_match('/^(?:اسمي|أنا|انا|معك|معاك)\s+([^\d,،\.\n!\?]+)$/u', trim($userMessage), $selfNameMatch)) {
+            $reply = $this->locale === 'ar'
+                ? "أهلاً وسهلاً بك يا {$userName}! تشرفنا بك في منصة **{$siteName}**. 🪵✨\n\nيسعدني جداً خدمتك ومساعدتك في اختيار وتفصيل أرقى الأثاث والديكورات الخشبية لمشروعك. ما هو العمل الخشبي أو التصميم الذي تفكر في تنفيذه اليوم؟"
+                : "Welcome {$userName}! It is a pleasure to have you with us at **{$siteName}**. 🪵✨ How can I assist you with your custom woodwork project today?";
+            return ['reply' => $reply, 'order' => null, 'suggested_ideas' => []];
+        }
+
+        // 6. Contextual Continuity: Order Registration follow-up (User providing phone number)
         if (preg_match('/(05\d{8}|\+9665\d{8})/i', $userMessage, $phoneMatches)) {
             $phoneFound = $phoneMatches[0];
-            $nameFound = 'عميلنا العزيز';
-            if (preg_match('/(?:اسمي|أنا|الاسم)\s+([^\d,،\.\n]+)/u', $userMessage, $nameMatches)) {
-                $nameFound = trim($nameMatches[1]);
-            }
+            $nameFound = $session->user_name ?: 'عميلنا العزيز';
 
             $orderNumber = 'ORD-' . date('Y') . '-' . str_pad(CustomOrder::count() + 1, 4, '0', STR_PAD_LEFT);
             $order = CustomOrder::create([
@@ -464,7 +486,7 @@ class GeminiAiService
             ];
         }
 
-        // 6. Contextual follow-up on pricing, dimensions, or details
+        // 7. Contextual follow-up on pricing, dimensions, or details
         if (str_contains($msgLower, 'كم سعره') || str_contains($msgLower, 'كم السعر') || str_contains($msgLower, 'التكلفة') || str_contains($msgLower, 'بكم')) {
             if (str_contains($recentAssistantLower, 'غرف') || str_contains($recentAssistantLower, 'سرير')) {
                 $reply = "بالنسبة لغرف النوم، تتفاوت التكلفة بحسب المقاسات ونوع الخشب المختار (مثل البلوط الطبيعي أو الجوز الأمريكي) وإكسسوارات الإضاءة. تبدأ أسعار الغرف الماستر الكاملة عادةً من 9,500 ريال وتشمل التصميم والهيكل والضمان.\n\nهل تود تزويدي بالمقاسات التقريبية لغرفتك لإعطائك تسعيرة دقيقة؟";
@@ -476,7 +498,57 @@ class GeminiAiService
             return ['reply' => $reply, 'order' => null, 'suggested_ideas' => []];
         }
 
-        // 7. Search in AI FAQs Knowledge Base (Exact and Keyword Match)
+        // 8. Gratitude & Appreciation ("شكراً", "يعطيك العافية", "تسلم", "مشكور")
+        if (str_contains($cleanMsg, 'شكرا') || str_contains($cleanMsg, 'شكراً') || 
+            str_contains($cleanMsg, 'يعطيك العافيه') || str_contains($cleanMsg, 'يعطيك العافية') || 
+            str_contains($cleanMsg, 'تسلم') || str_contains($cleanMsg, 'مشكور') || 
+            str_contains($cleanMsg, 'جزاك الله خير') || str_contains($cleanMsg, 'thank you') || str_contains($cleanMsg, 'thanks')) {
+            
+            $reply = $this->locale === 'ar'
+                ? "العفو يا {$userName}! يسعدنا دائماً خدمتك وفخورون بثقتك. 🪵✨ هل ترغب في الاستفسار عن أي تفاصيل إضافية أو ترغب في بدء تفصيل طلب مخصص؟"
+                : "You are most welcome, {$userName}! It is our pleasure to serve you. 🪵✨ Let me know if you need any further assistance with your custom woodwork!";
+            return ['reply' => $reply, 'order' => null, 'suggested_ideas' => []];
+        }
+
+        // 9. Affirmation & Agreement in Context ("نعم", "تمام", "أكيد", "أريد ذلك", "أعجبني", "حسناً", "ممتاز")
+        if (str_contains($cleanMsg, 'نعم') || str_contains($cleanMsg, 'اكيد') || str_contains($cleanMsg, 'أكيد') || 
+            str_contains($cleanMsg, 'تمام') || str_contains($cleanMsg, 'حسنا') || str_contains($cleanMsg, 'حسناً') || 
+            str_contains($cleanMsg, 'موافق') || str_contains($cleanMsg, 'اريد ذلك') || str_contains($cleanMsg, 'أريد ذلك') || 
+            str_contains($cleanMsg, 'اعجبني') || str_contains($cleanMsg, 'أعجبني') || str_contains($cleanMsg, 'ممتاز') || 
+            str_contains($cleanMsg, 'رائع') || str_contains($cleanMsg, 'اوك') || str_contains($cleanMsg, 'ok')) {
+            
+            if (str_contains($recentAssistantLower, 'غرف') || str_contains($recentAssistantLower, 'سرير')) {
+                $reply = "رائع جداً يا {$userName}! هل تود تزويدي بالمقاسات التقريبية لغرفتك (مثلاً 4×5 متر) أو رقم جوالك لنرسل لك المخططات الأولية ونرتب المعاينة؟";
+            } elseif (str_contains($recentAssistantLower, 'مكتب') || str_contains($recentAssistantLower, 'طاولة')) {
+                $reply = "ممتاز يا {$userName}! هل تفضل خشب الجوز الأمريكي أم خشب البلوط؟ وتفضل بتزويدنا برقم جوالك ليتواصل معك المهندس المختص.";
+            } elseif (str_contains($recentAssistantLower, 'خشب') || str_contains($recentAssistantLower, 'بلوط')) {
+                $reply = "اختيار موفق جداً! الأخشاب الطبيعية تمنح المكان فخامة استثنائية. ما هو التصميم أو القطعة التي تود تصنيعها بهذا الخشب؟";
+            } else {
+                $reply = "يسعدنا ذلك يا {$userName}! تفضل بإخباري بالتفاصيل أو المقاسات المطلوبة وسأرتبها لك بدقة مع فريقنا الهندسي.";
+            }
+            return ['reply' => $reply, 'order' => null, 'suggested_ideas' => []];
+        }
+
+        // 10. Greetings in ongoing conversation ("أهلاً", "مرحباً", "السلام عليكم", "صباح الخير", "مساء الخير", "هلا")
+        if (str_contains($cleanMsg, 'سلام عليكم') || str_contains($cleanMsg, 'السلام عليكم') || 
+            str_contains($cleanMsg, 'مرحبا') || str_contains($cleanMsg, 'مرحباً') || 
+            str_contains($cleanMsg, 'اهلا') || str_contains($cleanMsg, 'أهلاً') || 
+            str_contains($cleanMsg, 'صباح الخير') || str_contains($cleanMsg, 'مساء الخير') || 
+            str_contains($cleanMsg, 'هلا') || str_contains($cleanMsg, 'hello') || str_contains($cleanMsg, 'hi')) {
+            
+            if ($assistantMessagesCount === 0) {
+                $reply = $this->locale === 'ar'
+                    ? "وعليكم السلام ورحمة الله وبركاته! أهلاً بك في منصة **{$siteName}** ({$siteSlogan}). 🪵✨\n\nأنا **{$botName}**، مستشارك الحرفي والهندسي لتفصيل أرقى الأثاث وغرف النوم والمكاتب والديكورات الخشبية. كيف يمكنني خدمتك اليوم؟"
+                    : "Welcome to **{$siteName}** ({$siteSlogan})! 🪵✨ I am **{$botName}**, your consultant for luxury woodwork. How can I assist you today?";
+            } else {
+                $reply = $this->locale === 'ar'
+                    ? "أهلاً وسهلاً بك مجدداً يا {$userName}! 🪵✨ يسعدني دائماً تواصلك معنا. كيف يمكنني مساعدتك في استفسارك الحالي؟"
+                    : "Hello again, {$userName}! How can I help you with your inquiry today?";
+            }
+            return ['reply' => $reply, 'order' => null, 'suggested_ideas' => []];
+        }
+
+        // 11. Search in AI FAQs Knowledge Base (Exact and Keyword Match)
         $allFaqs = AiFaq::where('is_active', true)->orderBy('sort_order')->get();
         foreach ($allFaqs as $faq) {
             $qAr = mb_strtolower($faq->question_ar);
@@ -509,7 +581,7 @@ class GeminiAiService
             }
         }
 
-        // 8. Match Bedroom inquiries
+        // 12. Match Bedroom inquiries
         if (str_contains($msgLower, 'غرف') || str_contains($msgLower, 'نوم') || str_contains($msgLower, 'سرير') || str_contains($msgLower, 'دريسنج') || str_contains($msgLower, 'bedroom')) {
             $suggestedIdeas = [];
             if ($isAskingForDesigns) {
@@ -535,7 +607,7 @@ class GeminiAiService
             return ['reply' => $reply, 'order' => null, 'suggested_ideas' => $suggestedIdeas];
         }
 
-        // 9. Match Office inquiries
+        // 13. Match Office inquiries
         if (str_contains($msgLower, 'مكتب') || str_contains($msgLower, 'طاولة') || str_contains($msgLower, 'اجتماعات') || str_contains($msgLower, 'شركات') || str_contains($msgLower, 'office') || str_contains($msgLower, 'desk')) {
             $suggestedIdeas = [];
             if ($isAskingForDesigns) {
@@ -561,7 +633,7 @@ class GeminiAiService
             return ['reply' => $reply, 'order' => null, 'suggested_ideas' => $suggestedIdeas];
         }
 
-        // 10. Match Booths inquiries
+        // 14. Match Booths inquiries
         if (str_contains($msgLower, 'بوث') || str_contains($msgLower, 'معرض') || str_contains($msgLower, 'جناح') || str_contains($msgLower, 'فعالية') || str_contains($msgLower, 'booth') || str_contains($msgLower, 'exhibition')) {
             $suggestedIdeas = [];
             if ($isAskingForDesigns) {
@@ -587,7 +659,7 @@ class GeminiAiService
             return ['reply' => $reply, 'order' => null, 'suggested_ideas' => $suggestedIdeas];
         }
 
-        // 11. Match Wood types advice
+        // 15. Match Wood types advice
         if (str_contains($msgLower, 'خشب') || str_contains($msgLower, 'بلوط') || str_contains($msgLower, 'زان') || str_contains($msgLower, 'جوز') || str_contains($msgLower, 'تيك') || str_contains($msgLower, 'wood')) {
             $reply = $this->locale === 'ar'
                 ? "🪵 **دليل اختيار أنواع الأخشاب من خبراء {$siteName}:**\n\n" .
@@ -600,10 +672,16 @@ class GeminiAiService
             return ['reply' => $reply, 'order' => null, 'suggested_ideas' => []];
         }
 
-        // 12. General Hospitality Greeting & Guide
-        $reply = $this->locale === 'ar'
-            ? "أهلاً بك في منصة **{$siteName}** ({$siteSlogan})! 🪵✨\n\nأنا **{$botName}**، يسعدني مساعدتك في كل ما يخص تفصيل الأثاث الفاخر، غرف النوم، المكاتب التنفيذية، بوثات المعارض، وتكسيات الجدران.\n\nكيف يمكنني مساعدتك في مشروعك اليوم؟"
-            : "Welcome to **{$siteName}** ({$siteSlogan})! 🪵✨\n\nI am **{$botName}**, here to assist you with bespoke woodwork, luxury bedrooms, executive desks, and exhibition booths. How can I help you today?";
+        // 16. Contextual Dynamic Conversational Fallback (Never repeating full bot identity in ongoing chat)
+        if ($assistantMessagesCount > 0) {
+            $reply = $this->locale === 'ar'
+                ? "أنا معك يا {$userName}! 🪵 يسعدني جداً الإجابة على أي استفسار أو تفاصيل تخص مشروعك أو تقديم مقترحات لتفصيل الأثاث والمشاريع الخشبية في **{$siteName}**.\n\nما الذي تود معرفته بالتحديد لنساعدك فيه؟"
+                : "I am here to help, {$userName}! Feel free to share the details of your woodwork requirements or any questions you have for **{$siteName}**.";
+        } else {
+            $reply = $this->locale === 'ar'
+                ? "أهلاً بك في منصة **{$siteName}** ({$siteSlogan})! 🪵✨\n\nأنا **{$botName}**، يسعدني مساعدتك في كل ما يخص تفصيل الأثاث الفاخر، غرف النوم، المكاتب التنفيذية، بوثات المعارض، وتكسيات الجدران.\n\nكيف يمكنني مساعدتك في مشروعك اليوم؟"
+                : "Welcome to **{$siteName}** ({$siteSlogan})! 🪵✨\n\nI am **{$botName}**, here to assist you with bespoke woodwork, luxury bedrooms, executive desks, and exhibition booths. How can I help you today?";
+        }
 
         return ['reply' => $reply, 'order' => null, 'suggested_ideas' => []];
     }

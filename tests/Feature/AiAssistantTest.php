@@ -123,6 +123,31 @@ class AiAssistantTest extends TestCase
         $this->assertStringContainsString('9,500', $reply2);
     }
 
+    public function test_ai_chat_recognizes_user_name_and_avoids_repeated_welcome_greetings()
+    {
+        $sessionRes = $this->getJson(route('ai.chat.init'));
+        $token = $sessionRes->json('session_token');
+
+        // Turn 1: User introduces their name
+        $res1 = $this->postJson(route('ai.chat.send'), [
+            'session_token' => $token,
+            'message' => 'اسمي أسامة',
+        ]);
+        $res1->assertStatus(200);
+        $reply1 = $res1->json('reply');
+        $this->assertStringContainsString('أستاذ أسامة', $reply1);
+
+        // Turn 2: User sends a general thank you
+        $res2 = $this->postJson(route('ai.chat.send'), [
+            'session_token' => $token,
+            'message' => 'شكراً لك',
+        ]);
+        $res2->assertStatus(200);
+        $reply2 = $res2->json('reply');
+        $this->assertStringContainsString('أستاذ أسامة', $reply2);
+        $this->assertStringNotContainsString('أنا مستشار', $reply2);
+    }
+
     public function test_ai_chat_answers_from_ai_faq_knowledge_base()
     {
         AiFaq::create([
