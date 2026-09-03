@@ -181,6 +181,106 @@ class InitialContentSeeder extends Seeder
                 'sort_order' => 4,
             ],
             [
+                'section_key' => 'why_us',
+                'title_ar' => 'لماذا تختار ورشة أرتيزان للأعمال الخشبية؟',
+                'title_en' => 'Why Choose Artisan Woodworking Workshop?',
+                'subtitle_ar' => 'معايير ملكية تفوق التوقعات وتمنحك راحة البال التامة',
+                'subtitle_en' => 'Royal standards that exceed expectations and ensure total peace of mind',
+                'content_ar' => null,
+                'content_en' => null,
+                'meta_data' => [
+                    [
+                        'title_ar' => 'أخشاب طبيعية فاخرة 100%',
+                        'title_en' => '100% Premium Solid Hardwood',
+                        'icon' => 'fa-solid fa-tree',
+                        'desc_ar' => 'نستورد أفخر أنواع خشب الجوز الأمريكي، البلوط، والزان المجفف حرارياً لمقاومة الرطوبة والتمدد.',
+                        'desc_en' => 'We source finest kiln-dried American walnut, oak, and beech resistant to warping and humidity.'
+                    ],
+                    [
+                        'title_ar' => 'دقة تصنيع متناهية بالـ CNC',
+                        'title_en' => 'Sub-Millimeter CNC Precision',
+                        'icon' => 'fa-solid fa-microchip',
+                        'desc_ar' => 'استخدام مكائن الحفر والقص الرقمي الأحدث عالمياً لضمان تعشيق مثالي وتفاصيل غاية في الدقة.',
+                        'desc_en' => 'Employing cutting-edge 5-axis CNC machining for seamless joinery and intricate detailing.'
+                    ],
+                    [
+                        'title_ar' => 'ضمان ذهبي شامل حتى 10 سنوات',
+                        'title_en' => '10-Year Comprehensive Warranty',
+                        'icon' => 'fa-solid fa-shield-halved',
+                        'desc_ar' => 'نمنح عملاءنا ضماناً حقيقياً يغطي جودة الأخشاب، الهيكل الداخلي، والمفصلات والإكسسوارات الألمانية.',
+                        'desc_en' => 'True warranty covering wood structural integrity, finishes, and premium German hardware.'
+                    ],
+                    [
+                        'title_ar' => 'التزام صارم بجدول التسليم',
+                        'title_en' => 'Guaranteed Delivery Timelines',
+                        'icon' => 'fa-solid fa-clock-rotate-left',
+                        'desc_ar' => 'إدارة مشاريع احترافية تضمن تسليم وتركيب أعمالك في الموعد المحدد دون أي تأخير.',
+                        'desc_en' => 'Rigorous project management ensuring on-time manufacturing and turnkey installation.'
+                    ]
+                ],
+                'sort_order' => 5,
+            ],
+            [
+                'section_key' => 'process',
+                'title_ar' => 'كيف نعمل - مراحل تحويل فكرتك إلى تحفة خشبية',
+                'title_en' => 'How We Work - The Journey from Vision to Masterpiece',
+                'subtitle_ar' => 'منهجية عمل هندسية مدروسة تضمن أرقى مستويات الجودة والإتقان',
+                'subtitle_en' => 'A structured engineering workflow delivering exquisite craftsmanship and perfection',
+                'content_ar' => null,
+                'content_en' => null,
+                'meta_data' => [
+                    [
+                        'step_number' => '01',
+                        'title_ar' => 'الاستشارة والرفع المساحي',
+                        'title_en' => 'Consultation & Site Survey',
+                        'icon' => 'fa-solid fa-compass-drafting',
+                        'desc_ar' => 'جلسة استشارية لفهم تطلعاتك مع زيارة ميدانية لرفع المقاسات الهندسية بدقة تامة.',
+                        'desc_en' => 'Initial consultation to align on vision followed by laser-accurate site dimension surveys.'
+                    ],
+                    [
+                        'step_number' => '02',
+                        'title_ar' => 'التصميم الهندسي والـ 3D',
+                        'title_en' => '3D Architectural Modeling',
+                        'icon' => 'fa-solid fa-cubes',
+                        'desc_ar' => 'إعداد مخططات تفصيلية ورسومات ثلاثية الأبعاد واقعية تمكّنك من رؤية النتيجة قبل بدء التصنيع.',
+                        'desc_en' => 'Developing realistic 3D renders and shop drawings so you preview every detail prior to fabrication.'
+                    ],
+                    [
+                        'step_number' => '03',
+                        'title_ar' => 'اختيار وتجهيز الأخشاب',
+                        'title_en' => 'Timber Selection & Prep',
+                        'icon' => 'fa-solid fa-tree',
+                        'desc_ar' => 'فرز ألواح الخشب الطبيعي بعناية ومعالجتها بالحرارة والزيوت لضمان استقرارها الدائم.',
+                        'desc_en' => 'Hand-selecting prime timber slabs and conditioning them for maximum longevity.'
+                    ],
+                    [
+                        'step_number' => '04',
+                        'title_ar' => 'التصنيع والحرفية اليدوية',
+                        'title_en' => 'CNC Machining & Handcraft',
+                        'icon' => 'fa-solid fa-hammer',
+                        'desc_ar' => 'التنفيذ الدقيق بمكائن CNC المتطورة مع لمسات الحفر والتعشيق اليدوي التراثي بأيدي أمهر المعلمين.',
+                        'desc_en' => 'High-precision CNC cutting harmonized with master artisanal hand carving and traditional joinery.'
+                    ],
+                    [
+                        'step_number' => '05',
+                        'title_ar' => 'الدهان والتشطيب الإيطالي',
+                        'title_en' => 'Italian Finishing & Coating',
+                        'icon' => 'fa-solid fa-paint-roller',
+                        'desc_ar' => 'غرف دهان معزولة حرارياً لتطبيق طبقات البولي يوريثان والدهانات الإيطالية المقاومة للخدش والحرارة.',
+                        'desc_en' => 'Dust-free spray booths applying premium Italian polyurethane coatings resistant to scratches.'
+                    ],
+                    [
+                        'step_number' => '06',
+                        'title_ar' => 'التوصيل والتركيب المتقن',
+                        'title_en' => 'Delivery & Installation',
+                        'icon' => 'fa-solid fa-truck-ramp-box',
+                        'desc_ar' => 'تغليف احترافي ونقل آمن، مع تركيب هندسي محكم في موقعك بإشراف مهندسي الجودة والتسليم النهائي.',
+                        'desc_en' => 'Protective packaging, secure logistics, and meticulous on-site installation overseen by QA engineers.'
+                    ]
+                ],
+                'sort_order' => 6,
+            ],
+            [
                 'section_key' => 'stats',
                 'title_ar' => 'إنجازات وأرقام تتحدث عنا',
                 'title_en' => 'Key Milestones & Achievements',
@@ -194,7 +294,7 @@ class InitialContentSeeder extends Seeder
                     ['number' => '85+', 'label_ar' => 'بوث معرض تم تنفيذه', 'label_en' => 'Exhibition Stands Built'],
                     ['number' => '99%', 'label_ar' => 'نسبة رضا العملاء', 'label_en' => 'Client Satisfaction Rate'],
                 ],
-                'sort_order' => 5,
+                'sort_order' => 7,
             ],
         ];
 

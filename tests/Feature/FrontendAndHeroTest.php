@@ -29,33 +29,35 @@ class FrontendAndHeroTest extends TestCase
     public function test_homepage_only_shows_featured_services(): void
     {
         $featuredService = Service::create([
-            'title_ar' => 'خدمة مميزة خاصة',
+            'title_ar' => 'خدمة مميزة حصرية',
             'title_en' => 'Special Featured Service',
-            'slug' => 'special-featured-service',
+            'slug' => 'special-featured-service-test',
             'is_active' => true,
             'is_featured' => true,
             'sort_order' => 1,
         ]);
 
         $nonFeaturedService = Service::create([
-            'title_ar' => 'خدمة عادية غير مميزة',
+            'title_ar' => 'خدمة عادية غير مميزة أبدا',
             'title_en' => 'Regular Non-Featured Service',
-            'slug' => 'regular-non-featured-service',
+            'slug' => 'regular-non-featured-service-test',
             'is_active' => true,
             'is_featured' => false,
-            'sort_order' => 2,
+            'sort_order' => 99,
         ]);
 
         $res = $this->withSession(['locale' => 'ar'])->get('/');
         $res->assertStatus(200);
-        $res->assertSee('خدمة مميزة خاصة');
-        $res->assertDontSee('خدمة عادية غير مميزة');
+        
+        $homepageServices = $res->viewData('services');
+        $this->assertTrue($homepageServices->contains('id', $featuredService->id));
+        $this->assertFalse($homepageServices->contains('id', $nonFeaturedService->id));
 
         // But in /services page, both should appear
         $servicesPage = $this->withSession(['locale' => 'ar'])->get(route('services.index'));
         $servicesPage->assertStatus(200);
-        $servicesPage->assertSee('خدمة مميزة خاصة');
-        $servicesPage->assertSee('خدمة عادية غير مميزة');
+        $servicesPage->assertSee('خدمة مميزة حصرية');
+        $servicesPage->assertSee('خدمة عادية غير مميزة أبدا');
     }
 
     public function test_hero_slider_and_video_mode_switching(): void
@@ -110,6 +112,8 @@ class FrontendAndHeroTest extends TestCase
         $res->assertStatus(200);
         $res->assertSee('من نحن');
         $res->assertSee('قيمنا');
+        $res->assertSee('لماذا تختار');
+        $res->assertSee('كيف نعمل');
     }
 
     public function test_custom_page_frontend(): void

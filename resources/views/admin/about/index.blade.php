@@ -426,7 +426,387 @@
     </div>
 
     <!-- =========================================================================
-         SECTION 5: NUMBERS & STATISTICS (الأرقام والإنجازات القياسية)
+         SECTION 5: WHY CHOOSE US (لماذا تختارنا)
+         ========================================================================= -->
+    <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200/80 shadow-xs space-y-6">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-crown text-wood-600"></i>
+                <span>قسم لماذا تختارنا (Why Choose Us)</span>
+            </h2>
+            <div class="flex items-center gap-3">
+                <span class="text-xs font-semibold px-2.5 py-1 bg-wood-50 text-wood-800 rounded-lg">القسم الخامس</span>
+                <button type="button" onclick="addWhyUsRow()" class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-wood-600 hover:bg-wood-700 text-white text-xs font-bold rounded-xl shadow-sm transition cursor-pointer">
+                    <i class="fa-solid fa-plus text-[11px]"></i>
+                    <span>إضافة ميزة جديدة</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Section Title & Subtitle -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+                <div class="flex items-center justify-between mb-1.5">
+                    <label class="block text-xs font-semibold text-slate-700" for="why_us_title_ar">
+                        عنوان قسم لماذا تختارنا (بالعربي)
+                    </label>
+                    <button type="button" onclick="autoTranslate('why_us_title_ar', 'why_us_title_en', 'ar', 'en', this)" class="text-[11px] font-bold text-wood-600 hover:text-wood-700 inline-flex items-center gap-1">
+                        <i class="fa-solid fa-language"></i> {{ __('admin.translate_btn') }}
+                    </button>
+                </div>
+                <input type="text" id="why_us_title_ar" name="why_us[title_ar]" value="{{ old('why_us.title_ar', $whyUs?->title_ar ?: 'لماذا تختار ورشة أرتيزان للأعمال الخشبية؟') }}"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:bg-white focus:outline-none focus:border-wood-500 transition">
+            </div>
+
+            <div>
+                <div class="flex items-center justify-between mb-1.5">
+                    <label class="block text-xs font-semibold text-slate-700" for="why_us_title_en">
+                        عنوان قسم لماذا تختارنا (بالإنجليزي)
+                    </label>
+                    <button type="button" onclick="autoTranslate('why_us_title_en', 'why_us_title_ar', 'en', 'ar', this)" class="text-[11px] font-bold text-wood-600 hover:text-wood-700 inline-flex items-center gap-1">
+                        <i class="fa-solid fa-language"></i> {{ __('admin.translate_btn') }}
+                    </button>
+                </div>
+                <input type="text" id="why_us_title_en" name="why_us[title_en]" value="{{ old('why_us.title_en', $whyUs?->title_en ?: 'Why Choose Artisan Woodworking Workshop?') }}"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:bg-white focus:outline-none focus:border-wood-500 transition">
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+                <input type="text" id="why_us_subtitle_ar" name="why_us[subtitle_ar]" value="{{ old('why_us.subtitle_ar', $whyUs?->subtitle_ar ?: 'معايير ملكية تفوق التوقعات وتمنحك راحة البال التامة') }}" placeholder="العنوان الفرعي بالعربي"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-wood-500 transition">
+            </div>
+            <div>
+                <input type="text" id="why_us_subtitle_en" name="why_us[subtitle_en]" value="{{ old('why_us.subtitle_en', $whyUs?->subtitle_en ?: 'Royal standards that exceed expectations and ensure total peace of mind') }}" placeholder="Subtitle in English"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-wood-500 transition">
+            </div>
+        </div>
+
+        <!-- Dynamic Why Us Cards Repeater -->
+        <div id="whyUsContainer" class="space-y-4 pt-2">
+            @php
+                $whyItems = $whyUs?->meta_data ?: [
+                    [
+                        'title_ar' => 'أخشاب طبيعية فاخرة 100%',
+                        'title_en' => '100% Premium Solid Hardwood',
+                        'icon' => 'fa-solid fa-tree',
+                        'desc_ar' => 'نستورد أفخر أنواع خشب الجوز الأمريكي، البلوط، والزان المجفف حرارياً لمقاومة الرطوبة والتمدد.',
+                        'desc_en' => 'We source finest kiln-dried American walnut, oak, and beech resistant to warping and humidity.'
+                    ],
+                    [
+                        'title_ar' => 'دقة تصنيع متناهية بالـ CNC',
+                        'title_en' => 'Sub-Millimeter CNC Precision',
+                        'icon' => 'fa-solid fa-microchip',
+                        'desc_ar' => 'استخدام مكائن الحفر والقص الرقمي الأحدث عالمياً لضمان تعشيق مثالي وتفاصيل غاية في الدقة.',
+                        'desc_en' => 'Employing cutting-edge 5-axis CNC machining for seamless joinery and intricate detailing.'
+                    ],
+                    [
+                        'title_ar' => 'ضمان ذهبي شامل حتى 10 سنوات',
+                        'title_en' => '10-Year Comprehensive Warranty',
+                        'icon' => 'fa-solid fa-shield-halved',
+                        'desc_ar' => 'نمنح عملاءنا ضماناً حقيقياً يغطي جودة الأخشاب، الهيكل الداخلي، والمفصلات والإكسسوارات الألمانية.',
+                        'desc_en' => 'True warranty covering wood structural integrity, finishes, and premium German hardware.'
+                    ],
+                    [
+                        'title_ar' => 'التزام صارم بجدول التسليم',
+                        'title_en' => 'Guaranteed Delivery Timelines',
+                        'icon' => 'fa-solid fa-clock-rotate-left',
+                        'desc_ar' => 'إدارة مشاريع احترافية تضمن تسليم وتركيب أعمالك في الموعد المحدد دون أي تأخير.',
+                        'desc_en' => 'Rigorous project management ensuring on-time manufacturing and turnkey installation.'
+                    ]
+                ];
+            @endphp
+
+            @foreach($whyItems as $wIdx => $item)
+                <div class="p-5 rounded-2xl border border-slate-200/90 bg-slate-50/70 space-y-4 why-us-row relative group">
+                    <div class="flex items-center justify-between border-b border-slate-200/60 pb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-lg bg-wood-100 text-wood-800 flex items-center justify-center text-xs font-bold font-mono">{{ $wIdx + 1 }}</span>
+                            <span class="text-xs font-bold text-slate-800">ميزة لماذا تختارنا</span>
+                        </div>
+                        <button type="button" onclick="this.closest('.why-us-row').remove()" class="p-1.5 rounded-lg text-rose-500 hover:bg-rose-100 transition cursor-pointer" title="حذف">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
+                        <!-- Icon Picker Field -->
+                        <div class="sm:col-span-3 space-y-1.5">
+                            <label class="block text-[11px] font-bold text-slate-700">الأيقونة (FA)</label>
+                            <div class="flex items-center gap-2">
+                                <input type="hidden" name="why_us[items][{{ $wIdx }}][icon]" id="why_icon_input_{{ $wIdx }}" value="{{ $item['icon'] ?? 'fa-solid fa-crown' }}">
+                                <button type="button" onclick="openIconPicker('why_icon_input_{{ $wIdx }}', 'why_icon_preview_{{ $wIdx }}')"
+                                    class="w-full flex items-center justify-between gap-2 px-3 py-2 bg-white border border-slate-200 hover:border-wood-500 rounded-xl transition shadow-2xs group-hover:border-wood-400 cursor-pointer">
+                                    <div class="flex items-center gap-2.5">
+                                        <div id="why_icon_preview_{{ $wIdx }}" class="w-8 h-8 rounded-lg bg-wood-50 text-wood-700 flex items-center justify-center text-base border border-wood-200">
+                                            <i class="{{ $item['icon'] ?? 'fa-solid fa-crown' }}"></i>
+                                        </div>
+                                        <span class="text-xs font-mono text-slate-600 font-semibold" id="why_icon_text_{{ $wIdx }}">اختر أيقونة</span>
+                                    </div>
+                                    <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Title AR & EN -->
+                        <div class="sm:col-span-4 space-y-1">
+                            <div class="flex items-center justify-between">
+                                <label class="block text-[11px] font-bold text-slate-700">عنوان الميزة (بالعربي)</label>
+                                <button type="button" onclick="autoTranslate('why_title_ar_{{ $wIdx }}', 'why_title_en_{{ $wIdx }}', 'ar', 'en', this)" class="text-[10px] font-bold text-wood-600 hover:text-wood-700">
+                                    <i class="fa-solid fa-language"></i> ترجمة
+                                </button>
+                            </div>
+                            <input type="text" id="why_title_ar_{{ $wIdx }}" name="why_us[items][{{ $wIdx }}][title_ar]" value="{{ $item['title_ar'] ?? '' }}" placeholder="مثال: أخشاب طبيعية 100%" required
+                                class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-bold focus:outline-none focus:border-wood-500">
+                        </div>
+
+                        <div class="sm:col-span-5 space-y-1">
+                            <div class="flex items-center justify-between">
+                                <label class="block text-[11px] font-bold text-slate-700">عنوان الميزة (بالإنجليزي)</label>
+                                <button type="button" onclick="autoTranslate('why_title_en_{{ $wIdx }}', 'why_title_ar_{{ $wIdx }}', 'en', 'ar', this)" class="text-[10px] font-bold text-wood-600 hover:text-wood-700">
+                                    <i class="fa-solid fa-language"></i> ترجمة
+                                </button>
+                            </div>
+                            <input type="text" id="why_title_en_{{ $wIdx }}" name="why_us[items][{{ $wIdx }}][title_en]" value="{{ $item['title_en'] ?? '' }}" placeholder="e.g. 100% Premium Solid Hardwood"
+                                class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-wood-500">
+                        </div>
+                    </div>
+
+                    <!-- Description AR & EN -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                        <div class="space-y-1">
+                            <div class="flex items-center justify-between">
+                                <label class="block text-[11px] font-bold text-slate-700">شرح وتفاصيل الميزة (بالعربي)</label>
+                                <button type="button" onclick="autoTranslate('why_desc_ar_{{ $wIdx }}', 'why_desc_en_{{ $wIdx }}', 'ar', 'en', this)" class="text-[10px] font-bold text-wood-600 hover:text-wood-700">
+                                    <i class="fa-solid fa-language"></i> ترجمة
+                                </button>
+                            </div>
+                            <textarea id="why_desc_ar_{{ $wIdx }}" name="why_us[items][{{ $wIdx }}][desc_ar]" rows="2" placeholder="اكتب تفاصيل وشرحاً لهذه الميزة..."
+                                class="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:border-wood-500 leading-relaxed">{{ $item['desc_ar'] ?? '' }}</textarea>
+                        </div>
+
+                        <div class="space-y-1">
+                            <div class="flex items-center justify-between">
+                                <label class="block text-[11px] font-bold text-slate-700">شرح وتفاصيل الميزة (بالإنجليزي)</label>
+                                <button type="button" onclick="autoTranslate('why_desc_en_{{ $wIdx }}', 'why_desc_ar_{{ $wIdx }}', 'en', 'ar', this)" class="text-[10px] font-bold text-wood-600 hover:text-wood-700">
+                                    <i class="fa-solid fa-language"></i> ترجمة
+                                </button>
+                            </div>
+                            <textarea id="why_desc_en_{{ $wIdx }}" name="why_us[items][{{ $wIdx }}][desc_en]" rows="2" placeholder="Write details for this feature..."
+                                class="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:border-wood-500 leading-relaxed">{{ $item['desc_en'] ?? '' }}</textarea>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         SECTION 6: HOW WE WORK / PROCESS (كيف نعمل ومراحل التصنيع)
+         ========================================================================= -->
+    <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200/80 shadow-xs space-y-6">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-diagram-project text-wood-600"></i>
+                <span>قسم كيف نعمل (How We Work / Workflow)</span>
+            </h2>
+            <div class="flex items-center gap-3">
+                <span class="text-xs font-semibold px-2.5 py-1 bg-wood-50 text-wood-800 rounded-lg">القسم السادس</span>
+                <button type="button" onclick="addProcessRow()" class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-wood-600 hover:bg-wood-700 text-white text-xs font-bold rounded-xl shadow-sm transition cursor-pointer">
+                    <i class="fa-solid fa-plus text-[11px]"></i>
+                    <span>إضافة خطوة عمل جديدة</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Section Title & Subtitle -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+                <div class="flex items-center justify-between mb-1.5">
+                    <label class="block text-xs font-semibold text-slate-700" for="process_title_ar">
+                        عنوان قسم كيف نعمل (بالعربي)
+                    </label>
+                    <button type="button" onclick="autoTranslate('process_title_ar', 'process_title_en', 'ar', 'en', this)" class="text-[11px] font-bold text-wood-600 hover:text-wood-700 inline-flex items-center gap-1">
+                        <i class="fa-solid fa-language"></i> {{ __('admin.translate_btn') }}
+                    </button>
+                </div>
+                <input type="text" id="process_title_ar" name="process[title_ar]" value="{{ old('process.title_ar', $process?->title_ar ?: 'كيف نعمل - مراحل تحويل فكرتك إلى تحفة خشبية') }}"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:bg-white focus:outline-none focus:border-wood-500 transition">
+            </div>
+
+            <div>
+                <div class="flex items-center justify-between mb-1.5">
+                    <label class="block text-xs font-semibold text-slate-700" for="process_title_en">
+                        عنوان قسم كيف نعمل (بالإنجليزي)
+                    </label>
+                    <button type="button" onclick="autoTranslate('process_title_en', 'process_title_ar', 'en', 'ar', this)" class="text-[11px] font-bold text-wood-600 hover:text-wood-700 inline-flex items-center gap-1">
+                        <i class="fa-solid fa-language"></i> {{ __('admin.translate_btn') }}
+                    </button>
+                </div>
+                <input type="text" id="process_title_en" name="process[title_en]" value="{{ old('process.title_en', $process?->title_en ?: 'How We Work - The Journey from Vision to Masterpiece') }}"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:bg-white focus:outline-none focus:border-wood-500 transition">
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+                <input type="text" id="process_subtitle_ar" name="process[subtitle_ar]" value="{{ old('process.subtitle_ar', $process?->subtitle_ar ?: 'منهجية عمل هندسية مدروسة تضمن أرقى مستويات الجودة والإتقان') }}" placeholder="العنوان الفرعي بالعربي"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-wood-500 transition">
+            </div>
+            <div>
+                <input type="text" id="process_subtitle_en" name="process[subtitle_en]" value="{{ old('process.subtitle_en', $process?->subtitle_en ?: 'A structured engineering workflow delivering exquisite craftsmanship and perfection') }}" placeholder="Subtitle in English"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-wood-500 transition">
+            </div>
+        </div>
+
+        <!-- Dynamic Process Steps Repeater -->
+        <div id="processContainer" class="space-y-4 pt-2">
+            @php
+                $processSteps = $process?->meta_data ?: [
+                    [
+                        'step_number' => '01',
+                        'title_ar' => 'الاستشارة والرفع المساحي',
+                        'title_en' => 'Consultation & Site Survey',
+                        'icon' => 'fa-solid fa-compass-drafting',
+                        'desc_ar' => 'جلسة استشارية لفهم تطلعاتك مع زيارة ميدانية لرفع المقاسات الهندسية بدقة تامة.',
+                        'desc_en' => 'Initial consultation to align on vision followed by laser-accurate site dimension surveys.'
+                    ],
+                    [
+                        'step_number' => '02',
+                        'title_ar' => 'التصميم الهندسي والـ 3D',
+                        'title_en' => '3D Architectural Modeling',
+                        'icon' => 'fa-solid fa-cubes',
+                        'desc_ar' => 'إعداد مخططات تفصيلية ورسومات ثلاثية الأبعاد واقعية تمكّنك من رؤية النتيجة قبل بدء التصنيع.',
+                        'desc_en' => 'Developing realistic 3D renders and shop drawings so you preview every detail prior to fabrication.'
+                    ],
+                    [
+                        'step_number' => '03',
+                        'title_ar' => 'اختيار وتجهيز الأخشاب',
+                        'title_en' => 'Timber Selection & Prep',
+                        'icon' => 'fa-solid fa-tree',
+                        'desc_ar' => 'فرز ألواح الخشب الطبيعي بعناية ومعالجتها بالحرارة والزيوت لضمان استقرارها الدائم.',
+                        'desc_en' => 'Hand-selecting prime timber slabs and conditioning them for maximum longevity.'
+                    ],
+                    [
+                        'step_number' => '04',
+                        'title_ar' => 'التصنيع والحرفية اليدوية',
+                        'title_en' => 'CNC Machining & Handcraft',
+                        'icon' => 'fa-solid fa-hammer',
+                        'desc_ar' => 'التنفيذ الدقيق بمكائن CNC المتطورة مع لمسات الحفر والتعشيق اليدوي التراثي بأيدي أمهر المعلمين.',
+                        'desc_en' => 'High-precision CNC cutting harmonized with master artisanal hand carving and traditional joinery.'
+                    ],
+                    [
+                        'step_number' => '05',
+                        'title_ar' => 'الدهان والتشطيب الإيطالي',
+                        'title_en' => 'Italian Finishing & Coating',
+                        'icon' => 'fa-solid fa-paint-roller',
+                        'desc_ar' => 'غرف دهان معزولة حرارياً لتطبيق طبقات البولي يوريثان والدهانات الإيطالية المقاومة للخدش والحرارة.',
+                        'desc_en' => 'Dust-free spray booths applying premium Italian polyurethane coatings resistant to scratches.'
+                    ],
+                    [
+                        'step_number' => '06',
+                        'title_ar' => 'التوصيل والتركيب المتقن',
+                        'title_en' => 'Delivery & Installation',
+                        'icon' => 'fa-solid fa-truck-ramp-box',
+                        'desc_ar' => 'تغليف احترافي ونقل آمن، مع تركيب هندسي محكم في موقعك بإشراف مهندسي الجودة والتسليم النهائي.',
+                        'desc_en' => 'Protective packaging, secure logistics, and meticulous on-site installation overseen by QA engineers.'
+                    ]
+                ];
+            @endphp
+
+            @foreach($processSteps as $pIdx => $step)
+                <div class="p-5 rounded-2xl border border-slate-200/90 bg-slate-50/70 space-y-4 process-row relative group">
+                    <div class="flex items-center justify-between border-b border-slate-200/60 pb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="w-7 h-7 rounded-lg bg-wood-600 text-white flex items-center justify-center text-xs font-bold font-mono">{{ $step['step_number'] ?? sprintf('%02d', $pIdx + 1) }}</span>
+                            <span class="text-xs font-bold text-slate-800">خطوة العمل والمرحلة</span>
+                        </div>
+                        <button type="button" onclick="this.closest('.process-row').remove()" class="p-1.5 rounded-lg text-rose-500 hover:bg-rose-100 transition cursor-pointer" title="حذف الخطوة">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
+                        <!-- Step Number & Icon Picker Field -->
+                        <div class="sm:col-span-2 space-y-1">
+                            <label class="block text-[11px] font-bold text-slate-700">رقم الخطوة</label>
+                            <input type="text" name="process[steps][{{ $pIdx }}][step_number]" value="{{ $step['step_number'] ?? sprintf('%02d', $pIdx + 1) }}" placeholder="01" required
+                                class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-mono font-bold text-center focus:outline-none focus:border-wood-500">
+                        </div>
+
+                        <div class="sm:col-span-3 space-y-1.5">
+                            <label class="block text-[11px] font-bold text-slate-700">الأيقونة (FA)</label>
+                            <div class="flex items-center gap-2">
+                                <input type="hidden" name="process[steps][{{ $pIdx }}][icon]" id="process_icon_input_{{ $pIdx }}" value="{{ $step['icon'] ?? 'fa-solid fa-compass-drafting' }}">
+                                <button type="button" onclick="openIconPicker('process_icon_input_{{ $pIdx }}', 'process_icon_preview_{{ $pIdx }}')"
+                                    class="w-full flex items-center justify-between gap-2 px-3 py-2 bg-white border border-slate-200 hover:border-wood-500 rounded-xl transition shadow-2xs group-hover:border-wood-400 cursor-pointer">
+                                    <div class="flex items-center gap-2.5">
+                                        <div id="process_icon_preview_{{ $pIdx }}" class="w-8 h-8 rounded-lg bg-wood-50 text-wood-700 flex items-center justify-center text-base border border-wood-200">
+                                            <i class="{{ $step['icon'] ?? 'fa-solid fa-compass-drafting' }}"></i>
+                                        </div>
+                                        <span class="text-xs font-mono text-slate-600 font-semibold" id="process_icon_text_{{ $pIdx }}">اختر أيقونة</span>
+                                    </div>
+                                    <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Title AR & EN -->
+                        <div class="sm:col-span-3 space-y-1">
+                            <div class="flex items-center justify-between">
+                                <label class="block text-[11px] font-bold text-slate-700">اسم المرحلة (بالعربي)</label>
+                                <button type="button" onclick="autoTranslate('process_title_ar_{{ $pIdx }}', 'process_title_en_{{ $pIdx }}', 'ar', 'en', this)" class="text-[10px] font-bold text-wood-600 hover:text-wood-700">
+                                    <i class="fa-solid fa-language"></i> ترجمة
+                                </button>
+                            </div>
+                            <input type="text" id="process_title_ar_{{ $pIdx }}" name="process[steps][{{ $pIdx }}][title_ar]" value="{{ $step['title_ar'] ?? '' }}" placeholder="مثال: الاستشارة والرفع المساحي" required
+                                class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-bold focus:outline-none focus:border-wood-500">
+                        </div>
+
+                        <div class="sm:col-span-4 space-y-1">
+                            <div class="flex items-center justify-between">
+                                <label class="block text-[11px] font-bold text-slate-700">اسم المرحلة (بالإنجليزي)</label>
+                                <button type="button" onclick="autoTranslate('process_title_en_{{ $pIdx }}', 'process_title_ar_{{ $pIdx }}', 'en', 'ar', this)" class="text-[10px] font-bold text-wood-600 hover:text-wood-700">
+                                    <i class="fa-solid fa-language"></i> ترجمة
+                                </button>
+                            </div>
+                            <input type="text" id="process_title_en_{{ $pIdx }}" name="process[steps][{{ $pIdx }}][title_en]" value="{{ $step['title_en'] ?? '' }}" placeholder="e.g. Consultation & Site Survey"
+                                class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-wood-500">
+                        </div>
+                    </div>
+
+                    <!-- Description AR & EN -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                        <div class="space-y-1">
+                            <div class="flex items-center justify-between">
+                                <label class="block text-[11px] font-bold text-slate-700">شرح خطوات المرحلة (بالعربي)</label>
+                                <button type="button" onclick="autoTranslate('process_desc_ar_{{ $pIdx }}', 'process_desc_en_{{ $pIdx }}', 'ar', 'en', this)" class="text-[10px] font-bold text-wood-600 hover:text-wood-700">
+                                    <i class="fa-solid fa-language"></i> ترجمة
+                                </button>
+                            </div>
+                            <textarea id="process_desc_ar_{{ $pIdx }}" name="process[steps][{{ $pIdx }}][desc_ar]" rows="2" placeholder="اكتب تفاصيل هذه المرحلة..."
+                                class="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:border-wood-500 leading-relaxed">{{ $step['desc_ar'] ?? '' }}</textarea>
+                        </div>
+
+                        <div class="space-y-1">
+                            <div class="flex items-center justify-between">
+                                <label class="block text-[11px] font-bold text-slate-700">شرح خطوات المرحلة (بالإنجليزي)</label>
+                                <button type="button" onclick="autoTranslate('process_desc_en_{{ $pIdx }}', 'process_desc_ar_{{ $pIdx }}', 'en', 'ar', this)" class="text-[10px] font-bold text-wood-600 hover:text-wood-700">
+                                    <i class="fa-solid fa-language"></i> ترجمة
+                                </button>
+                            </div>
+                            <textarea id="process_desc_en_{{ $pIdx }}" name="process[steps][{{ $pIdx }}][desc_en]" rows="2" placeholder="Write details for this workflow step..."
+                                class="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:border-wood-500 leading-relaxed">{{ $step['desc_en'] ?? '' }}</textarea>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         SECTION 7: NUMBERS & STATISTICS (الأرقام والإنجازات القياسية)
          ========================================================================= -->
     <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200/80 shadow-xs space-y-6">
         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -434,10 +814,13 @@
                 <i class="fa-solid fa-chart-line text-wood-600"></i>
                 <span>الأرقام والإنجازات القياسية (Counters & Statistics)</span>
             </h2>
-            <button type="button" onclick="addCounterRow()" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-wood-50 hover:bg-wood-100 text-wood-800 text-xs font-bold rounded-lg transition cursor-pointer">
-                <i class="fa-solid fa-plus text-[10px]"></i>
-                <span>إضافة رقم قياسي</span>
-            </button>
+            <div class="flex items-center gap-3">
+                <span class="text-xs font-semibold px-2.5 py-1 bg-wood-50 text-wood-800 rounded-lg">القسم السابع</span>
+                <button type="button" onclick="addCounterRow()" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-wood-50 hover:bg-wood-100 text-wood-800 text-xs font-bold rounded-lg transition cursor-pointer">
+                    <i class="fa-solid fa-plus text-[10px]"></i>
+                    <span>إضافة رقم قياسي</span>
+                </button>
+            </div>
         </div>
 
         <div id="countersContainer" class="space-y-3">
@@ -780,6 +1163,188 @@
         `;
         container.appendChild(row);
         valueIndex++;
+    }
+
+    let counterIndex = {{ count($counters) }};
+    let valueIndex = {{ count($valueItems) }};
+    let whyUsIndex = {{ count($whyItems) }};
+    let processIndex = {{ count($processSteps) }};
+
+    function addWhyUsRow() {
+        const container = document.getElementById('whyUsContainer');
+        const wIdx = whyUsIndex;
+        const row = document.createElement('div');
+        row.className = 'p-5 rounded-2xl border border-slate-200/90 bg-slate-50/70 space-y-4 why-us-row relative group animate-fade-in';
+        row.innerHTML = `
+            <div class="flex items-center justify-between border-b border-slate-200/60 pb-3">
+                <div class="flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-lg bg-wood-100 text-wood-800 flex items-center justify-center text-xs font-bold font-mono">${wIdx + 1}</span>
+                    <span class="text-xs font-bold text-slate-800">ميزة لماذا تختارنا</span>
+                </div>
+                <button type="button" onclick="this.closest('.why-us-row').remove()" class="p-1.5 rounded-lg text-rose-500 hover:bg-rose-100 transition cursor-pointer" title="حذف">
+                    <i class="fa-solid fa-trash-can text-xs"></i>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
+                <div class="sm:col-span-3 space-y-1.5">
+                    <label class="block text-[11px] font-bold text-slate-700">الأيقونة (FA)</label>
+                    <div class="flex items-center gap-2">
+                        <input type="hidden" name="why_us[items][${wIdx}][icon]" id="why_icon_input_${wIdx}" value="fa-solid fa-crown">
+                        <button type="button" onclick="openIconPicker('why_icon_input_${wIdx}', 'why_icon_preview_${wIdx}')"
+                            class="w-full flex items-center justify-between gap-2 px-3 py-2 bg-white border border-slate-200 hover:border-wood-500 rounded-xl transition shadow-2xs group-hover:border-wood-400 cursor-pointer">
+                            <div class="flex items-center gap-2.5">
+                                <div id="why_icon_preview_${wIdx}" class="w-8 h-8 rounded-lg bg-wood-50 text-wood-700 flex items-center justify-center text-base border border-wood-200">
+                                    <i class="fa-solid fa-crown"></i>
+                                </div>
+                                <span class="text-xs font-mono text-slate-600 font-semibold" id="why_icon_text_${wIdx}">اختر أيقونة</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="sm:col-span-4 space-y-1">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-[11px] font-bold text-slate-700">عنوان الميزة (بالعربي)</label>
+                        <button type="button" onclick="autoTranslate('why_title_ar_${wIdx}', 'why_title_en_${wIdx}', 'ar', 'en', this)" class="text-[10px] font-bold text-wood-600 hover:text-wood-700">
+                            <i class="fa-solid fa-language"></i> ترجمة
+                        </button>
+                    </div>
+                    <input type="text" id="why_title_ar_${wIdx}" name="why_us[items][${wIdx}][title_ar]" placeholder="مثال: أخشاب طبيعية 100%" required
+                        class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-bold focus:outline-none focus:border-wood-500">
+                </div>
+
+                <div class="sm:col-span-5 space-y-1">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-[11px] font-bold text-slate-700">عنوان الميزة (بالإنجليزي)</label>
+                        <button type="button" onclick="autoTranslate('why_title_en_${wIdx}', 'why_title_ar_${wIdx}', 'en', 'ar', this)" class="text-[10px] font-bold text-wood-600 hover:text-wood-700">
+                            <i class="fa-solid fa-language"></i> ترجمة
+                        </button>
+                    </div>
+                    <input type="text" id="why_title_en_${wIdx}" name="why_us[items][${wIdx}][title_en]" placeholder="e.g. 100% Premium Solid Hardwood"
+                        class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-wood-500">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                <div class="space-y-1">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-[11px] font-bold text-slate-700">شرح وتفاصيل الميزة (بالعربي)</label>
+                        <button type="button" onclick="autoTranslate('why_desc_ar_${wIdx}', 'why_desc_en_${wIdx}', 'ar', 'en', this)" class="text-[10px] font-bold text-wood-600 hover:text-wood-700">
+                            <i class="fa-solid fa-language"></i> ترجمة
+                        </button>
+                    </div>
+                    <textarea id="why_desc_ar_${wIdx}" name="why_us[items][${wIdx}][desc_ar]" rows="2" placeholder="اكتب تفاصيل وشرحاً لهذه الميزة..."
+                        class="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:border-wood-500 leading-relaxed"></textarea>
+                </div>
+
+                <div class="space-y-1">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-[11px] font-bold text-slate-700">شرح وتفاصيل الميزة (بالإنجليزي)</label>
+                        <button type="button" onclick="autoTranslate('why_desc_en_${wIdx}', 'why_desc_ar_${wIdx}', 'en', 'ar', this)" class="text-[10px] font-bold text-wood-600 hover:text-wood-700">
+                            <i class="fa-solid fa-language"></i> ترجمة
+                        </button>
+                    </div>
+                    <textarea id="why_desc_en_${wIdx}" name="why_us[items][${wIdx}][desc_en]" rows="2" placeholder="Write details for this feature..."
+                        class="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:border-wood-500 leading-relaxed"></textarea>
+                </div>
+            </div>
+        `;
+        container.appendChild(row);
+        whyUsIndex++;
+    }
+
+    function addProcessRow() {
+        const container = document.getElementById('processContainer');
+        const pIdx = processIndex;
+        const row = document.createElement('div');
+        row.className = 'p-5 rounded-2xl border border-slate-200/90 bg-slate-50/70 space-y-4 process-row relative group animate-fade-in';
+        const stepNumFormatted = (pIdx + 1).toString().padStart(2, '0');
+        row.innerHTML = `
+            <div class="flex items-center justify-between border-b border-slate-200/60 pb-3">
+                <div class="flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-lg bg-wood-600 text-white flex items-center justify-center text-xs font-bold font-mono">${stepNumFormatted}</span>
+                    <span class="text-xs font-bold text-slate-800">خطوة العمل والمرحلة</span>
+                </div>
+                <button type="button" onclick="this.closest('.process-row').remove()" class="p-1.5 rounded-lg text-rose-500 hover:bg-rose-100 transition cursor-pointer" title="حذف الخطوة">
+                    <i class="fa-solid fa-trash-can text-xs"></i>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
+                <div class="sm:col-span-2 space-y-1">
+                    <label class="block text-[11px] font-bold text-slate-700">رقم الخطوة</label>
+                    <input type="text" name="process[steps][${pIdx}][step_number]" value="${stepNumFormatted}" placeholder="01" required
+                        class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-mono font-bold text-center focus:outline-none focus:border-wood-500">
+                </div>
+
+                <div class="sm:col-span-3 space-y-1.5">
+                    <label class="block text-[11px] font-bold text-slate-700">الأيقونة (FA)</label>
+                    <div class="flex items-center gap-2">
+                        <input type="hidden" name="process[steps][${pIdx}][icon]" id="process_icon_input_${pIdx}" value="fa-solid fa-compass-drafting">
+                        <button type="button" onclick="openIconPicker('process_icon_input_${pIdx}', 'process_icon_preview_${pIdx}')"
+                            class="w-full flex items-center justify-between gap-2 px-3 py-2 bg-white border border-slate-200 hover:border-wood-500 rounded-xl transition shadow-2xs group-hover:border-wood-400 cursor-pointer">
+                            <div class="flex items-center gap-2.5">
+                                <div id="process_icon_preview_${pIdx}" class="w-8 h-8 rounded-lg bg-wood-50 text-wood-700 flex items-center justify-center text-base border border-wood-200">
+                                    <i class="fa-solid fa-compass-drafting"></i>
+                                </div>
+                                <span class="text-xs font-mono text-slate-600 font-semibold" id="process_icon_text_${pIdx}">اختر أيقونة</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="sm:col-span-3 space-y-1">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-[11px] font-bold text-slate-700">اسم المرحلة (بالعربي)</label>
+                        <button type="button" onclick="autoTranslate('process_title_ar_${pIdx}', 'process_title_en_${pIdx}', 'ar', 'en', this)" class="text-[10px] font-bold text-wood-600 hover:text-wood-700">
+                            <i class="fa-solid fa-language"></i> ترجمة
+                        </button>
+                    </div>
+                    <input type="text" id="process_title_ar_${pIdx}" name="process[steps][${pIdx}][title_ar]" placeholder="مثال: الاستشارة والتصميم" required
+                        class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-bold focus:outline-none focus:border-wood-500">
+                </div>
+
+                <div class="sm:col-span-4 space-y-1">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-[11px] font-bold text-slate-700">اسم المرحلة (بالإنجليزي)</label>
+                        <button type="button" onclick="autoTranslate('process_title_en_${pIdx}', 'process_title_ar_${pIdx}', 'en', 'ar', this)" class="text-[10px] font-bold text-wood-600 hover:text-wood-700">
+                            <i class="fa-solid fa-language"></i> ترجمة
+                        </button>
+                    </div>
+                    <input type="text" id="process_title_en_${pIdx}" name="process[steps][${pIdx}][title_en]" placeholder="e.g. Consultation & Design"
+                        class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-wood-500">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                <div class="space-y-1">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-[11px] font-bold text-slate-700">شرح خطوات المرحلة (بالعربي)</label>
+                        <button type="button" onclick="autoTranslate('process_desc_ar_${pIdx}', 'process_desc_en_${pIdx}', 'ar', 'en', this)" class="text-[10px] font-bold text-wood-600 hover:text-wood-700">
+                            <i class="fa-solid fa-language"></i> ترجمة
+                        </button>
+                    </div>
+                    <textarea id="process_desc_ar_${pIdx}" name="process[steps][${pIdx}][desc_ar]" rows="2" placeholder="اكتب تفاصيل هذه المرحلة..."
+                        class="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:border-wood-500 leading-relaxed"></textarea>
+                </div>
+
+                <div class="space-y-1">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-[11px] font-bold text-slate-700">شرح خطوات المرحلة (بالإنجليزي)</label>
+                        <button type="button" onclick="autoTranslate('process_desc_en_${pIdx}', 'process_desc_ar_${pIdx}', 'en', 'ar', this)" class="text-[10px] font-bold text-wood-600 hover:text-wood-700">
+                            <i class="fa-solid fa-language"></i> ترجمة
+                        </button>
+                    </div>
+                    <textarea id="process_desc_en_${pIdx}" name="process[steps][${pIdx}][desc_en]" rows="2" placeholder="Write details for this workflow step..."
+                        class="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:border-wood-500 leading-relaxed"></textarea>
+                </div>
+            </div>
+        `;
+        container.appendChild(row);
+        processIndex++;
     }
 
     function addCounterRow() {

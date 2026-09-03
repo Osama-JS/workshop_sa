@@ -16,10 +16,12 @@ class PageController extends Controller
         $story = AboutSection::where('section_key', 'story')->first();
         $vision = AboutSection::where('section_key', 'vision_mission')->first();
         $values = AboutSection::where('section_key', 'values')->first();
+        $whyUs = AboutSection::where('section_key', 'why_us')->first();
+        $process = AboutSection::where('section_key', 'process')->first();
         $stats = AboutSection::where('section_key', 'stats')->first();
         $testimonials = Testimonial::where('is_active', true)->orderBy('sort_order')->get();
 
-        return view('frontend.about', compact('about', 'story', 'vision', 'values', 'stats', 'testimonials'));
+        return view('frontend.about', compact('about', 'story', 'vision', 'values', 'whyUs', 'process', 'stats', 'testimonials'));
     }
 
     public function show($slug)

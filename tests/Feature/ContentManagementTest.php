@@ -194,6 +194,37 @@ class ContentManagementTest extends TestCase
                     ]
                 ]
             ],
+            'why_us' => [
+                'title_ar' => 'لماذا تختار ورشة أرتيزان؟',
+                'title_en' => 'Why Choose Artisan Workshop?',
+                'subtitle_ar' => 'معايير ملكية تفوق التوقعات',
+                'subtitle_en' => 'Royal Standards Exceeding Expectations',
+                'items' => [
+                    [
+                        'title_ar' => 'أخشاب طبيعية 100%',
+                        'title_en' => '100% Solid Hardwood',
+                        'icon' => 'fa-solid fa-tree',
+                        'desc_ar' => 'أفضل أنواع الخشب الطبيعي',
+                        'desc_en' => 'Finest natural wood',
+                    ]
+                ]
+            ],
+            'process' => [
+                'title_ar' => 'كيف نعمل - مراحل تحويل فكرتك',
+                'title_en' => 'How We Work - Journey to Reality',
+                'subtitle_ar' => 'منهجية عمل هندسية',
+                'subtitle_en' => 'Engineering Methodology',
+                'steps' => [
+                    [
+                        'step_number' => '01',
+                        'title_ar' => 'الاستشارة والرفع المساحي',
+                        'title_en' => 'Consultation & Survey',
+                        'icon' => 'fa-solid fa-compass-drafting',
+                        'desc_ar' => 'رفع المقاسات بدقة',
+                        'desc_en' => 'Accurate measurements',
+                    ]
+                ]
+            ],
             'stats' => [
                 'counters' => [
                     ['number' => '20+', 'label_ar' => 'سنة من الخبرة', 'label_en' => 'Years Experience'],
@@ -213,6 +244,14 @@ class ContentManagementTest extends TestCase
         $values = AboutSection::where('section_key', 'values')->first();
         $this->assertEquals('قيمنا ومبادئنا الراسخة', $values->title_ar);
         $this->assertCount(2, $values->meta_data);
+
+        $whyUs = AboutSection::where('section_key', 'why_us')->first();
+        $this->assertEquals('لماذا تختار ورشة أرتيزان؟', $whyUs->title_ar);
+        $this->assertCount(1, $whyUs->meta_data);
+
+        $process = AboutSection::where('section_key', 'process')->first();
+        $this->assertEquals('كيف نعمل - مراحل تحويل فكرتك', $process->title_ar);
+        $this->assertCount(1, $process->meta_data);
 
         $stats = AboutSection::where('section_key', 'stats')->first();
         $this->assertCount(2, $stats->meta_data);

@@ -14,9 +14,11 @@ class AboutController extends Controller
         $story = AboutSection::where('section_key', 'story')->first();
         $vision = AboutSection::where('section_key', 'vision_mission')->first();
         $values = AboutSection::where('section_key', 'values')->first();
+        $whyUs = AboutSection::where('section_key', 'why_us')->first();
+        $process = AboutSection::where('section_key', 'process')->first();
         $stats = AboutSection::where('section_key', 'stats')->first();
 
-        return view('admin.about.index', compact('about', 'story', 'vision', 'values', 'stats'));
+        return view('admin.about.index', compact('about', 'story', 'vision', 'values', 'whyUs', 'process', 'stats'));
     }
 
     public function update(Request $request)
@@ -97,7 +99,64 @@ class AboutController extends Controller
             $values->save();
         }
 
-        // 5. Stats / Counters section (الأرقام والإنجازات)
+        // 5. Why Choose Us section (لماذا تختارنا)
+        if ($request->has('why_us')) {
+            $whyUsData = $request->input('why_us');
+            $whyUs = AboutSection::firstOrNew(['section_key' => 'why_us']);
+            $whyUs->title_ar = $whyUsData['title_ar'] ?? '';
+            $whyUs->title_en = $whyUsData['title_en'] ?? '';
+            $whyUs->subtitle_ar = $whyUsData['subtitle_ar'] ?? '';
+            $whyUs->subtitle_en = $whyUsData['subtitle_en'] ?? '';
+
+            $whyItems = [];
+            if (!empty($whyUsData['items']) && is_array($whyUsData['items'])) {
+                foreach ($whyUsData['items'] as $item) {
+                    if (!empty($item['title_ar'])) {
+                        $whyItems[] = [
+                            'title_ar' => $item['title_ar'],
+                            'title_en' => $item['title_en'] ?? $item['title_ar'],
+                            'icon' => $item['icon'] ?? 'fa-solid fa-crown',
+                            'desc_ar' => $item['desc_ar'] ?? '',
+                            'desc_en' => $item['desc_en'] ?? ($item['desc_ar'] ?? ''),
+                        ];
+                    }
+                }
+            }
+            $whyUs->meta_data = $whyItems;
+            $whyUs->save();
+        }
+
+        // 6. How We Work / Process section (كيف نعمل)
+        if ($request->has('process')) {
+            $processData = $request->input('process');
+            $process = AboutSection::firstOrNew(['section_key' => 'process']);
+            $process->title_ar = $processData['title_ar'] ?? '';
+            $process->title_en = $processData['title_en'] ?? '';
+            $process->subtitle_ar = $processData['subtitle_ar'] ?? '';
+            $process->subtitle_en = $processData['subtitle_en'] ?? '';
+
+            $processSteps = [];
+            if (!empty($processData['steps']) && is_array($processData['steps'])) {
+                $stepCount = 1;
+                foreach ($processData['steps'] as $step) {
+                    if (!empty($step['title_ar'])) {
+                        $processSteps[] = [
+                            'step_number' => $step['step_number'] ?? sprintf('%02d', $stepCount),
+                            'title_ar' => $step['title_ar'],
+                            'title_en' => $step['title_en'] ?? $step['title_ar'],
+                            'icon' => $step['icon'] ?? 'fa-solid fa-compass-drafting',
+                            'desc_ar' => $step['desc_ar'] ?? '',
+                            'desc_en' => $step['desc_en'] ?? ($step['desc_ar'] ?? ''),
+                        ];
+                        $stepCount++;
+                    }
+                }
+            }
+            $process->meta_data = $processSteps;
+            $process->save();
+        }
+
+        // 7. Stats / Counters section (الأرقام والإنجازات)
         if ($request->has('stats')) {
             $statsData = $request->input('stats');
             $stats = AboutSection::firstOrNew(['section_key' => 'stats']);
