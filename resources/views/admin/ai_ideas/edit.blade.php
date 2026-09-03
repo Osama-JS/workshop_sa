@@ -108,7 +108,7 @@
                 <label class="block text-xs font-bold text-slate-700 mb-2">صورة التصميم أو المخطط</label>
                 @if($aiIdea->image)
                     <div class="mb-3">
-                        <img src="{{ asset('storage/' . $aiIdea->image) }}" class="w-32 h-24 object-cover rounded-xl border border-slate-200">
+                        <img src="{{ storage_asset($aiIdea->image) }}" class="w-32 h-24 object-cover rounded-xl border border-slate-200">
                     </div>
                 @endif
                 <input type="file" name="image" accept="image/*" class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-wood-600 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:bg-wood-50 file:text-wood-700 hover:file:bg-wood-100">

@@ -53,7 +53,7 @@
         <!-- MODE: STATIC LUXURY IMAGE -->
         <div class="absolute inset-0 z-0">
             @php
-                $staticImg = $heroStaticImage ? asset('storage/' . $heroStaticImage) : 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1920&q=80';
+                $staticImg = $heroStaticImage ? storage_asset($heroStaticImage) : 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1920&q=80';
             @endphp
             <img src="{{ $staticImg }}" class="w-full h-full object-cover opacity-50">
             <div class="absolute inset-0 bg-gradient-to-t from-dark-950 via-dark-950/70 to-dark-950/90"></div>
@@ -183,7 +183,7 @@
                         <!-- Image & Icon -->
                         <div class="h-56 relative overflow-hidden bg-dark-950">
                             @if($service->image)
-                                <img src="{{ asset('storage/' . $service->image) }}" alt="{{ $service->title }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-80">
+                                <img src="{{ storage_asset($service->image) }}" alt="{{ $service->title }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-80">
                             @else
                                 <div class="w-full h-full flex items-center justify-center bg-wood-950 text-wood-600 text-6xl">
                                     <i class="fa-solid fa-{{ $service->icon ?: 'couch' }}"></i>
@@ -355,7 +355,7 @@
             <div class="space-y-6">
                 <div class="relative rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
                     @php
-                        $aboutImg = $story?->image ? asset('storage/' . $story->image) : 'https://images.unsplash.com/photo-1540518614846-7ede433c4b13?auto=format&fit=crop&w=1000&q=80';
+                        $aboutImg = $story?->image ? storage_asset($story->image) : 'https://images.unsplash.com/photo-1540518614846-7ede433c4b13?auto=format&fit=crop&w=1000&q=80';
                     @endphp
                     <img src="{{ $aboutImg }}" alt="About Artisan Wood" class="w-full h-80 object-cover">
                     <div class="absolute inset-0 bg-gradient-to-t from-dark-950 via-transparent to-transparent"></div>

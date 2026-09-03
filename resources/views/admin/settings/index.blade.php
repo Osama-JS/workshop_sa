@@ -73,7 +73,7 @@
                         <div class="flex items-center gap-4">
                             <div class="w-20 h-20 rounded-2xl bg-white border border-slate-200 p-2 flex items-center justify-center overflow-hidden shadow-xs">
                                 @if(!empty($allSettings['site_logo']->value))
-                                    <img id="logo_preview" src="{{ asset('storage/' . $allSettings['site_logo']->value) }}" class="max-h-full max-w-full object-contain">
+                                    <img id="logo_preview" src="{{ storage_asset($allSettings['site_logo']->value) }}" class="max-h-full max-w-full object-contain">
                                 @else
                                     <div id="logo_preview_placeholder" class="text-wood-600 text-3xl font-bold">🪵</div>
                                     <img id="logo_preview" src="" class="max-h-full max-w-full object-contain hidden">
@@ -94,7 +94,7 @@
                         <div class="flex items-center gap-4">
                             <div class="w-20 h-20 rounded-2xl bg-white border border-slate-200 p-2 flex items-center justify-center overflow-hidden shadow-xs">
                                 @if(!empty($allSettings['site_favicon']->value))
-                                    <img id="favicon_preview" src="{{ asset('storage/' . $allSettings['site_favicon']->value) }}" class="max-h-full max-w-full object-contain">
+                                    <img id="favicon_preview" src="{{ storage_asset($allSettings['site_favicon']->value) }}" class="max-h-full max-w-full object-contain">
                                 @else
                                     <div id="favicon_preview_placeholder" class="text-wood-600 text-3xl font-bold">🌐</div>
                                     <img id="favicon_preview" src="" class="max-h-full max-w-full object-contain hidden">
@@ -702,7 +702,7 @@
                     </h3>
                     <div class="flex items-center gap-4">
                         @if(!empty($allSettings['hero_static_image']->value))
-                            <img src="{{ asset('storage/' . $allSettings['hero_static_image']->value) }}" class="w-24 h-16 rounded-xl object-cover ring-2 ring-slate-200">
+                            <img src="{{ storage_asset($allSettings['hero_static_image']->value) }}" class="w-24 h-16 rounded-xl object-cover ring-2 ring-slate-200">
                         @endif
                         <input type="file" name="hero_static_image" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-wood-100 file:text-wood-800 hover:file:bg-wood-200 cursor-pointer">
                     </div>

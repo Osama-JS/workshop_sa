@@ -154,7 +154,7 @@
                 </label>
                 <div class="flex items-center gap-3">
                     @if($service->image)
-                        <img src="{{ asset('storage/' . $service->image) }}" class="w-10 h-10 rounded-lg object-cover ring-1 ring-slate-200">
+                        <img src="{{ storage_asset($service->image) }}" class="w-10 h-10 rounded-lg object-cover ring-1 ring-slate-200">
                     @endif
                     <input type="file" name="image" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-wood-100 file:text-wood-800 hover:file:bg-wood-200 cursor-pointer">
                 </div>

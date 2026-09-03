@@ -168,7 +168,7 @@
                 <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3">
                     @foreach($portfolio->images as $img)
                         <div class="relative group rounded-xl overflow-hidden aspect-square border border-slate-200 bg-slate-100">
-                            <img src="{{ asset('storage/' . $img->file_path) }}" class="w-full h-full object-cover">
+                            <img src="{{ storage_asset($img->file_path) }}" class="w-full h-full object-cover">
                             <button type="button" onclick="deleteAttachment({{ $img->id }})" class="absolute top-1 right-1 w-7 h-7 bg-rose-600 text-white rounded-lg opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-xs shadow-md" title="حذف الصورة">
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
@@ -185,7 +185,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     @foreach($portfolio->pdfs as $pdf)
                         <div class="flex items-center justify-between p-3 rounded-xl border border-slate-200 bg-slate-50">
-                            <a href="{{ asset('storage/' . $pdf->file_path) }}" target="_blank" class="flex items-center gap-2 text-xs font-bold text-slate-800 hover:text-wood-600 truncate">
+                            <a href="{{ storage_asset($pdf->file_path) }}" target="_blank" class="flex items-center gap-2 text-xs font-bold text-slate-800 hover:text-wood-600 truncate">
                                 <i class="fa-solid fa-file-pdf text-red-500 text-lg"></i>
                                 <span class="truncate">{{ $pdf->file_name ?: 'وثيقة PDF' }}</span>
                             </a>

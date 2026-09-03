@@ -131,8 +131,8 @@
                 </h3>
                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                     @foreach($portfolio->images as $img)
-                        <div onclick="openLightbox('{{ asset('storage/' . $img->file_path) }}')" class="glass-card rounded-2xl overflow-hidden aspect-square cursor-pointer group relative">
-                            <img src="{{ asset('storage/' . $img->file_path) }}" alt="Project Photo" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
+                        <div onclick="openLightbox('{{ storage_asset($img->file_path) }}')" class="glass-card rounded-2xl overflow-hidden aspect-square cursor-pointer group relative">
+                            <img src="{{ storage_asset($img->file_path) }}" alt="Project Photo" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
                             <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xl">
                                 <i class="fa-solid fa-magnifying-glass-plus"></i>
                             </div>
@@ -161,7 +161,7 @@
                                     <p class="text-[11px] text-slate-500 font-mono">{{ $pdf->file_size ?: 'PDF' }}</p>
                                 </div>
                             </div>
-                            <a href="{{ asset('storage/' . $pdf->file_path) }}" target="_blank" download class="px-4 py-2 rounded-xl bg-gold-gradient text-slate-950 text-xs font-bold hover:brightness-110 transition flex items-center gap-1.5">
+                            <a href="{{ storage_asset($pdf->file_path) }}" target="_blank" download class="px-4 py-2 rounded-xl bg-gold-gradient text-slate-950 text-xs font-bold hover:brightness-110 transition flex items-center gap-1.5">
                                 <i class="fa-solid fa-download"></i>
                                 <span>{{ app()->getLocale() === 'ar' ? 'تحميل' : 'Download' }}</span>
                             </a>

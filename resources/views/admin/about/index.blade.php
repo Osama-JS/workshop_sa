@@ -87,7 +87,7 @@
         <!-- Image for About Us Section -->
         <div class="pt-4 border-t border-slate-100 flex items-center gap-5">
             @if($about?->image)
-                <img src="{{ asset('storage/' . $about->image) }}" class="w-16 h-16 rounded-xl object-cover ring-2 ring-slate-200">
+                <img src="{{ storage_asset($about->image) }}" class="w-16 h-16 rounded-xl object-cover ring-2 ring-slate-200">
             @endif
             <div class="space-y-1">
                 <label class="block text-xs font-semibold text-slate-700">صورة جانبية لقسم من نحن</label>
@@ -167,7 +167,7 @@
         <!-- Story Image -->
         <div class="pt-4 border-t border-slate-100 flex items-center gap-5">
             @if($story?->image)
-                <img src="{{ asset('storage/' . $story->image) }}" class="w-16 h-16 rounded-xl object-cover ring-2 ring-slate-200">
+                <img src="{{ storage_asset($story->image) }}" class="w-16 h-16 rounded-xl object-cover ring-2 ring-slate-200">
             @endif
             <div class="space-y-1">
                 <label class="block text-xs font-semibold text-slate-700">صورة جانبية لقسم القصة</label>

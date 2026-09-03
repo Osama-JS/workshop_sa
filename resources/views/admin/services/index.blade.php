@@ -54,7 +54,7 @@
                 <!-- Top Cover & Icon Header -->
                 <div class="h-40 bg-gradient-to-br from-wood-800 to-dark-900 relative flex items-center justify-center overflow-hidden">
                     @if($service->image)
-                        <img src="{{ asset('storage/' . $service->image) }}" alt="{{ $service->title }}" class="w-full h-full object-cover opacity-60">
+                        <img src="{{ storage_asset($service->image) }}" alt="{{ $service->title }}" class="w-full h-full object-cover opacity-60">
                     @else
                         <div class="text-wood-400 opacity-20 text-8xl absolute">
                             <i class="fa-solid fa-couch"></i>

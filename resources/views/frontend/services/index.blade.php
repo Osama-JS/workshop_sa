@@ -28,7 +28,7 @@
                         <!-- Image & Icon -->
                         <div class="h-60 relative overflow-hidden bg-dark-950">
                             @if($service->image)
-                                <img src="{{ asset('storage/' . $service->image) }}" alt="{{ $service->title }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-80">
+                                <img src="{{ storage_asset($service->image) }}" alt="{{ $service->title }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-80">
                             @else
                                 <div class="w-full h-full flex items-center justify-center bg-wood-950 text-wood-600 text-6xl">
                                     <i class="fa-solid fa-{{ $service->icon ?: 'couch' }}"></i>

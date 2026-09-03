@@ -33,7 +33,7 @@
         $aboutContent = $about?->content ?: (app()->getLocale() === 'ar' 
             ? '<p>نحن في ورشة أرتيزان نفخر بكوننا أحد أبرز الصروح المتخصصة في النجارة المعمارية وتفصيل الأثاث الخشبي الفاخر في المملكة العربية السعودية. نعتمد على كوادر فنية وحرفيين ذوي خبرات عريقة، ونوظف أحدث ما توصلت إليه التكنولوجيا لنلبي تطلعات القصور والمكاتب والمعارض والمشاريع التجارية الكبرى بدقة متناهية وجودة تفوق التوقعات.</p>' 
             : '<p>At Artisan Workshop, we take immense pride in being one of the premier workshops dedicated to architectural joinery and luxury custom woodwork in Saudi Arabia. Combining master artisan hands with state-of-the-art CNC technology, we craft bespoke furniture and timber interiors that exceed expectations.</p>');
-        $aboutImgUrl = $about?->image ? asset('storage/' . $about->image) : 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1000&q=80';
+        $aboutImgUrl = $about?->image ? storage_asset($about->image) : 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1000&q=80';
     @endphp
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -121,7 +121,7 @@
         $storyContent = $story?->content ?: (app()->getLocale() === 'ar' 
             ? '<p>انطلقنا برؤية طموحة لتقديم أثاث وأعمال خشبية تفوق التوقعات، حيث نجمع بين أفضل أنواع الخشب الطبيعي وتقنيات التصنيع الحديثة واللمسات اليدوية المتقنة.</p>' 
             : '<p>We embarked with an ambitious vision to craft timber products exceeding expectations, marrying finest woods with state-of-the-art joinery.</p>');
-        $storyImgUrl = $story?->image ? asset('storage/' . $story->image) : 'https://images.unsplash.com/photo-1540518614846-7ede433c4b13?auto=format&fit=crop&w=1000&q=80';
+        $storyImgUrl = $story?->image ? storage_asset($story->image) : 'https://images.unsplash.com/photo-1540518614846-7ede433c4b13?auto=format&fit=crop&w=1000&q=80';
     @endphp
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

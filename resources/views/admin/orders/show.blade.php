@@ -136,7 +136,7 @@
                                     </div>
                                 </div>
                                 @if(!empty($att['path']))
-                                    <a href="{{ asset('storage/' . $att['path']) }}" target="_blank" download class="p-2 rounded-lg bg-wood-600 hover:bg-wood-700 text-white text-xs transition" title="تحميل">
+                                    <a href="{{ storage_asset($att['path']) }}" target="_blank" download class="p-2 rounded-lg bg-wood-600 hover:bg-wood-700 text-white text-xs transition" title="تحميل">
                                         <i class="fa-solid fa-download"></i>
                                     </a>
                                 @endif

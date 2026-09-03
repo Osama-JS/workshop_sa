@@ -31,7 +31,7 @@
                 <!-- Main Cover Image -->
                 @if($service->image)
                     <div class="rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
-                        <img src="{{ asset('storage/' . $service->image) }}" alt="{{ $service->title }}" class="w-full max-h-[480px] object-cover">
+                        <img src="{{ storage_asset($service->image) }}" alt="{{ $service->title }}" class="w-full max-h-[480px] object-cover">
                     </div>
                 @endif
 

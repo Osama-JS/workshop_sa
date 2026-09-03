@@ -45,7 +45,7 @@
                             <div class="p-4 rounded-2xl rounded-bl-sm bg-wood-600 text-white text-xs leading-relaxed shadow-sm">
                                 @if($msg->image_path)
                                     <div class="mb-2">
-                                        <img src="{{ asset('storage/' . $msg->image_path) }}" alt="attached" class="rounded-xl max-h-48 object-cover border border-white/20">
+                                        <img src="{{ storage_asset($msg->image_path) }}" alt="attached" class="rounded-xl max-h-48 object-cover border border-white/20">
                                     </div>
                                 @endif
                                 <p class="whitespace-pre-line">{{ $msg->message }}</p>

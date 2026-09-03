@@ -16,7 +16,7 @@
     <meta property="og:title" content="@yield('title', \App\Models\Setting::get('meta_title_' . app()->getLocale(), \App\Models\Setting::get('site_name_' . app()->getLocale(), 'أرتيزان للأعمال الخشبية الفاخرة')))">
     <meta property="og:description" content="@yield('meta_description', \App\Models\Setting::get('meta_desc_' . app()->getLocale(), 'ورشة سعودية متخصصة في تفصيل وصناعة أفخر الأعمال الخشبية والديكورات.'))">
     @if($logo = \App\Models\Setting::get('site_logo'))
-        <meta property="og:image" content="{{ asset('storage/' . $logo) }}">
+        <meta property="og:image" content="{{ storage_asset($logo) }}">
     @endif
     <meta property="og:site_name" content="{{ \App\Models\Setting::get('site_name_' . app()->getLocale(), 'أرتيزان للأعمال الخشبية') }}">
 
@@ -47,7 +47,7 @@
 
     <!-- Favicon -->
     @if($favicon = \App\Models\Setting::get('site_favicon'))
-        <link rel="icon" href="{{ asset('storage/' . $favicon) }}" type="image/x-icon">
+        <link rel="icon" href="{{ storage_asset($favicon) }}" type="image/x-icon">
     @endif
 
     <!-- Google Fonts: Cairo (Arabic) & Outfit (English) -->
@@ -580,7 +580,7 @@
             <!-- Brand Logo -->
             <a href="{{ route('home') }}" class="flex items-center gap-3 group">
                 @if($logo = \App\Models\Setting::get('site_logo'))
-                    <img src="{{ asset('storage/' . $logo) }}" alt="{{ \App\Models\Setting::get('site_name_' . app()->getLocale()) }}" class="h-12 w-auto object-contain">
+                    <img src="{{ storage_asset($logo) }}" alt="{{ \App\Models\Setting::get('site_name_' . app()->getLocale()) }}" class="h-12 w-auto object-contain">
                 @else
                     <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-wood-600 to-wood-800 flex items-center justify-center text-white text-xl shadow-lg shadow-wood-600/30 group-hover:scale-105 transition-transform border border-gold-500/40">
                         <i class="fa-solid fa-tree"></i>
