@@ -108,6 +108,46 @@
                     </div>
                 </div>
 
+                <!-- Header Branding Display Mode -->
+                <div class="space-y-3 p-5 bg-wood-50/50 rounded-2xl border border-wood-200/60">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-palette text-wood-600"></i>
+                            <span>طريقة عرض هوية الموقع في شريط التنقل العلوي (Navbar):</span>
+                        </label>
+                        <span class="text-[11px] text-wood-700 font-semibold bg-wood-100 px-2.5 py-0.5 rounded-full">تحكم مرن بالهيدر والفوتر</span>
+                    </div>
+                    
+                    @php
+                        $currentDisplayMode = $allSettings['logo_display_mode']->value ?? 'logo_only';
+                    @endphp
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <label class="relative flex items-center gap-3 p-3.5 rounded-xl border {{ $currentDisplayMode === 'logo_only' ? 'border-wood-600 bg-white ring-2 ring-wood-500/20' : 'border-slate-200 bg-white hover:bg-slate-50' }} cursor-pointer transition">
+                            <input type="radio" name="logo_display_mode" value="logo_only" {{ $currentDisplayMode === 'logo_only' ? 'checked' : '' }} class="text-wood-600 focus:ring-wood-500">
+                            <div>
+                                <span class="block text-xs font-bold text-slate-800">الشعار فقط (Logo Only)</span>
+                                <span class="block text-[11px] text-slate-500">عرض الشعار بحجم كبير وبارز وواضح جداً دون نص</span>
+                            </div>
+                        </label>
+
+                        <label class="relative flex items-center gap-3 p-3.5 rounded-xl border {{ $currentDisplayMode === 'both' ? 'border-wood-600 bg-white ring-2 ring-wood-500/20' : 'border-slate-200 bg-white hover:bg-slate-50' }} cursor-pointer transition">
+                            <input type="radio" name="logo_display_mode" value="both" {{ $currentDisplayMode === 'both' ? 'checked' : '' }} class="text-wood-600 focus:ring-wood-500">
+                            <div>
+                                <span class="block text-xs font-bold text-slate-800">الشعار مع اسم الموقع (Logo & Text)</span>
+                                <span class="block text-[11px] text-slate-500">عرض الشعار وبجانبه اسم المنشأة والشعار اللفظي</span>
+                            </div>
+                        </label>
+
+                        <label class="relative flex items-center gap-3 p-3.5 rounded-xl border {{ $currentDisplayMode === 'text_only' ? 'border-wood-600 bg-white ring-2 ring-wood-500/20' : 'border-slate-200 bg-white hover:bg-slate-50' }} cursor-pointer transition">
+                            <input type="radio" name="logo_display_mode" value="text_only" {{ $currentDisplayMode === 'text_only' ? 'checked' : '' }} class="text-wood-600 focus:ring-wood-500">
+                            <div>
+                                <span class="block text-xs font-bold text-slate-800">اسم الموقع فقط (Text Only)</span>
+                                <span class="block text-[11px] text-slate-500">عرض اسم المنشأة والشعار اللفظي والأيقونة الرمزية</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
                 <!-- Company Name AR & EN -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>

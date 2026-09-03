@@ -576,24 +576,43 @@
 
     <!-- Main Navigation Header -->
     <header class="sticky top-0 z-50 glass-nav transition-all duration-300">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 sm:h-24 flex items-center justify-between">
             <!-- Brand Logo -->
-            <a href="{{ route('home') }}" class="flex items-center gap-3 group">
-                @if($logo = \App\Models\Setting::get('site_logo'))
-                    <img src="{{ storage_asset($logo) }}" alt="{{ \App\Models\Setting::get('site_name_' . app()->getLocale()) }}" class="h-12 w-auto object-contain">
+            @php
+                $logoDisplayMode = \App\Models\Setting::get('logo_display_mode', 'logo_only');
+                $logo = \App\Models\Setting::get('site_logo');
+                $siteName = \App\Models\Setting::get('site_name_' . app()->getLocale(), 'أرتيزان للأعمال الخشبية');
+                $siteSlogan = \App\Models\Setting::get('site_slogan_' . app()->getLocale(), 'للأعمال الخشبية الفاخرة');
+            @endphp
+            <a href="{{ route('home') }}" class="flex items-center gap-3.5 group py-1">
+                @if($logoDisplayMode === 'logo_only' && $logo)
+                    <!-- Mode: Logo Only (Prominent, High-Visibility, Large Display) -->
+                    <img src="{{ storage_asset($logo) }}" alt="{{ $siteName }}" class="h-14 sm:h-16 md:h-20 max-w-[260px] sm:max-w-[320px] w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-md">
+                @elseif($logoDisplayMode === 'both' && $logo)
+                    <!-- Mode: Logo & Text -->
+                    <img src="{{ storage_asset($logo) }}" alt="{{ $siteName }}" class="h-12 sm:h-14 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
+                    <div>
+                        <span class="font-black text-lg sm:text-xl text-white tracking-wide block leading-tight">
+                            {{ $siteName }}
+                        </span>
+                        <span class="text-[11px] text-gold-400 font-medium tracking-wider block">
+                            {{ $siteSlogan }}
+                        </span>
+                    </div>
                 @else
-                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-wood-600 to-wood-800 flex items-center justify-center text-white text-xl shadow-lg shadow-wood-600/30 group-hover:scale-105 transition-transform border border-gold-500/40">
+                    <!-- Mode: Text Only -->
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-wood-600 to-wood-800 flex items-center justify-center text-white text-xl shadow-lg shadow-wood-600/30 group-hover:scale-105 transition-transform border border-gold-500/40">
                         <i class="fa-solid fa-tree"></i>
                     </div>
+                    <div>
+                        <span class="font-black text-lg sm:text-xl text-white tracking-wide block leading-tight">
+                            {{ $siteName }}
+                        </span>
+                        <span class="text-[11px] text-gold-400 font-medium tracking-wider block">
+                            {{ $siteSlogan }}
+                        </span>
+                    </div>
                 @endif
-                <div>
-                    <span class="font-black text-lg sm:text-xl text-white tracking-wide block leading-tight">
-                        {{ \App\Models\Setting::get('site_name_' . app()->getLocale(), 'أرتيزان') }}
-                    </span>
-                    <span class="text-[11px] text-gold-400 font-medium tracking-wider block">
-                        {{ \App\Models\Setting::get('site_slogan_' . app()->getLocale(), 'للأعمال الخشبية الفاخرة') }}
-                    </span>
-                </div>
             </a>
 
             <!-- Desktop Nav Links -->
@@ -710,10 +729,14 @@
             <!-- Col 1: About Platform -->
             <div class="space-y-4">
                 <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-wood-600 to-wood-800 flex items-center justify-center text-white text-lg">
-                        <i class="fa-solid fa-tree"></i>
-                    </div>
-                    <span class="font-bold text-white text-lg">{{ \App\Models\Setting::get('site_name_' . app()->getLocale(), 'أرتيزان') }}</span>
+                    @if(($logoDisplayMode === 'logo_only' || $logoDisplayMode === 'both') && $logo)
+                        <img src="{{ storage_asset($logo) }}" alt="{{ $siteName }}" class="h-12 max-w-[180px] w-auto object-contain">
+                    @else
+                        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-wood-600 to-wood-800 flex items-center justify-center text-white text-lg">
+                            <i class="fa-solid fa-tree"></i>
+                        </div>
+                        <span class="font-bold text-white text-lg">{{ $siteName }}</span>
+                    @endif
                 </div>
                 <p class="text-xs text-slate-400 leading-relaxed">
                     {{ \App\Models\Setting::get('footer_desc_' . app()->getLocale(), 'ورشة أعمال خشبية متخصصة في صناعة غرف النوم، المكاتب التنفيذية، وبوثات المعارض والديكورات والتكسيات بأعلى معايير الإتقان والحرفية.') }}

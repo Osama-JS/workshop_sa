@@ -157,9 +157,79 @@
 </section>
 
 <!-- ==========================================
-     2. SERVICES SHOWCASE SECTION
+     2. ABOUT & CRAFTSMANSHIP & MILESTONES
      ========================================== -->
-<section id="services" class="py-24 bg-dark-900 relative">
+<section id="about" class="py-24 bg-dark-900 relative overflow-hidden border-t border-white/5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <!-- Left Text Content -->
+            <div class="space-y-6">
+                <span class="text-xs font-bold uppercase tracking-widest text-gold-500 block">
+                    {{ $story?->subtitle ?: (app()->getLocale() === 'ar' ? 'عراقة وجودة تليق بذوقكم' : 'Heritage & Uncompromising Quality') }}
+                </span>
+                <h2 class="text-3xl sm:text-4xl font-black text-white tracking-tight leading-tight">
+                    {{ $story?->title ?: (app()->getLocale() === 'ar' ? 'قصة شغف في تحويل الخشب الطبيعي إلى فن معماري' : 'A Passion for Turning Natural Hardwood into Architectural Art') }}
+                </h2>
+                <div class="w-16 h-1 bg-gold-500 rounded-full"></div>
+
+                <div class="text-sm text-slate-300 leading-relaxed space-y-4">
+                    @if($story?->content)
+                        {!! $story->content !!}
+                    @else
+                        <p>
+                            تأسست ورشة أرتيزان لتكون الوجهة الرائدة في المملكة العربية السعودية للأعمال الخشبية الفاخرة والمخصصة. نعتمد على أمهر الحرفيين وأحدث ماكينات التصنيع الدقيق (CNC) لنقدم لعملائنا غرف نوم ملكية، مكاتب تنفيذية، وتصاميم أجنحة معارض تحاكي أرقى المعايير العالمية.
+                        </p>
+                    @endif
+                </div>
+
+                <div class="flex items-center gap-4 pt-2">
+                    <a href="{{ route('about') }}" class="px-6 py-3 rounded-xl bg-gold-gradient text-slate-950 font-bold text-xs shadow-lg shadow-gold-500/20 hover:brightness-110 transition">
+                        {{ app()->getLocale() === 'ar' ? 'اقرأ المزيد عن ورشتنا' : 'Learn More About Us' }}
+                    </a>
+                </div>
+            </div>
+
+            <!-- Right Visual & Stats Box -->
+            <div class="space-y-6">
+                <div class="relative rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
+                    @php
+                        $aboutImg = $story?->image ? storage_asset($story->image) : 'https://images.unsplash.com/photo-1540518614846-7ede433c4b13?auto=format&fit=crop&w=1000&q=80';
+                    @endphp
+                    <img src="{{ $aboutImg }}" alt="About Artisan Wood" class="w-full h-80 object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-dark-950 via-transparent to-transparent"></div>
+                </div>
+
+                <!-- Animated Milestone Counters -->
+                @php
+                    $counters = $stats?->meta_data ?: [
+                        ['number' => '15+', 'label_ar' => 'سنوات من الخبرة', 'label_en' => 'Years Experience'],
+                        ['number' => '450+', 'label_ar' => 'مشروع فاخر تم تسليمه', 'label_en' => 'Luxury Projects Delivered'],
+                        ['number' => '98%', 'label_ar' => 'نسبة رضا العملاء', 'label_en' => 'Client Satisfaction'],
+                        ['number' => '30+', 'label_ar' => 'حرفي وفني محترف', 'label_en' => 'Master Artisans'],
+                    ];
+                @endphp
+
+                <div class="flex flex-wrap justify-center gap-4">
+                    @foreach($counters as $c)
+                        <div class="glass-card p-4 rounded-2xl text-center space-y-1 w-[calc(50%-0.6rem)] sm:w-[calc(25%-0.85rem)] max-w-[160px]">
+                            <span class="text-2xl sm:text-3xl font-black text-gold-gradient block font-mono">
+                                {{ $c['number'] ?? '' }}
+                            </span>
+                            <span class="text-[11px] text-slate-400 font-semibold leading-tight block">
+                                {{ app()->getLocale() === 'ar' ? ($c['label_ar'] ?? '') : ($c['label_en'] ?? $c['label_ar'] ?? '') }}
+                            </span>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==========================================
+     3. SERVICES SHOWCASE SECTION
+     ========================================== -->
+<section id="services" class="py-24 bg-dark-950 relative border-t border-white/5">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Section Header -->
         <div class="text-center max-w-2xl mx-auto space-y-3 mb-16">
@@ -229,9 +299,9 @@
 </section>
 
 <!-- ==========================================
-     3. PORTFOLIO & PROJECTS SHOWCASE SECTION
+     4. PORTFOLIO & PROJECTS SHOWCASE SECTION
      ========================================== -->
-<section id="portfolio" class="py-24 bg-dark-950 relative border-t border-white/5">
+<section id="portfolio" class="py-24 bg-dark-900 relative border-t border-white/5">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Section Header -->
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
@@ -314,76 +384,6 @@
                     {{ app()->getLocale() === 'ar' ? 'لا توجد مشاريع مضافة حالياً' : 'No projects added yet.' }}
                 </div>
             @endforelse
-        </div>
-    </div>
-</section>
-
-<!-- ==========================================
-     4. ABOUT & CRAFTSMANSHIP & MILESTONES
-     ========================================== -->
-<section id="about" class="py-24 bg-dark-900 relative overflow-hidden border-t border-white/5">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <!-- Left Text Content -->
-            <div class="space-y-6">
-                <span class="text-xs font-bold uppercase tracking-widest text-gold-500 block">
-                    {{ $story?->subtitle ?: (app()->getLocale() === 'ar' ? 'عراقة وجودة تليق بذوقكم' : 'Heritage & Uncompromising Quality') }}
-                </span>
-                <h2 class="text-3xl sm:text-4xl font-black text-white tracking-tight leading-tight">
-                    {{ $story?->title ?: (app()->getLocale() === 'ar' ? 'قصة شغف في تحويل الخشب الطبيعي إلى فن معماري' : 'A Passion for Turning Natural Hardwood into Architectural Art') }}
-                </h2>
-                <div class="w-16 h-1 bg-gold-500 rounded-full"></div>
-
-                <div class="text-sm text-slate-300 leading-relaxed space-y-4">
-                    @if($story?->content)
-                        {!! $story->content !!}
-                    @else
-                        <p>
-                            تأسست ورشة أرتيزان لتكون الوجهة الرائدة في المملكة العربية السعودية للأعمال الخشبية الفاخرة والمخصصة. نعتمد على أمهر الحرفيين وأحدث ماكينات التصنيع الدقيق (CNC) لنقدم لعملائنا غرف نوم ملكية، مكاتب تنفيذية، وتصاميم أجنحة معارض تحاكي أرقى المعايير العالمية.
-                        </p>
-                    @endif
-                </div>
-
-                <div class="flex items-center gap-4 pt-2">
-                    <a href="{{ route('about') }}" class="px-6 py-3 rounded-xl bg-gold-gradient text-slate-950 font-bold text-xs shadow-lg shadow-gold-500/20 hover:brightness-110 transition">
-                        {{ app()->getLocale() === 'ar' ? 'اقرأ المزيد عن ورشتنا' : 'Learn More About Us' }}
-                    </a>
-                </div>
-            </div>
-
-            <!-- Right Visual & Stats Box -->
-            <div class="space-y-6">
-                <div class="relative rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
-                    @php
-                        $aboutImg = $story?->image ? storage_asset($story->image) : 'https://images.unsplash.com/photo-1540518614846-7ede433c4b13?auto=format&fit=crop&w=1000&q=80';
-                    @endphp
-                    <img src="{{ $aboutImg }}" alt="About Artisan Wood" class="w-full h-80 object-cover">
-                    <div class="absolute inset-0 bg-gradient-to-t from-dark-950 via-transparent to-transparent"></div>
-                </div>
-
-                <!-- Animated Milestone Counters -->
-                @php
-                    $counters = $stats?->meta_data ?: [
-                        ['number' => '15+', 'label_ar' => 'سنوات من الخبرة', 'label_en' => 'Years Experience'],
-                        ['number' => '450+', 'label_ar' => 'مشروع فاخر تم تسليمه', 'label_en' => 'Luxury Projects Delivered'],
-                        ['number' => '98%', 'label_ar' => 'نسبة رضا العملاء', 'label_en' => 'Client Satisfaction'],
-                        ['number' => '30+', 'label_ar' => 'حرفي وفني محترف', 'label_en' => 'Master Artisans'],
-                    ];
-                @endphp
-
-                <div class="flex flex-wrap justify-center gap-4">
-                    @foreach($counters as $c)
-                        <div class="glass-card p-4 rounded-2xl text-center space-y-1 w-[calc(50%-0.6rem)] sm:w-[calc(25%-0.85rem)] max-w-[160px]">
-                            <span class="text-2xl sm:text-3xl font-black text-gold-gradient block font-mono">
-                                {{ $c['number'] ?? '' }}
-                            </span>
-                            <span class="text-[11px] text-slate-400 font-semibold leading-tight block">
-                                {{ app()->getLocale() === 'ar' ? ($c['label_ar'] ?? '') : ($c['label_en'] ?? $c['label_ar'] ?? '') }}
-                            </span>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
         </div>
     </div>
 </section>
