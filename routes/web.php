@@ -145,12 +145,22 @@ Route::prefix('admin')->name('admin.')->group(function () {
     });
 });
 
-// Direct Public Storage File Serving Route (Guarantees no 403 Forbidden on Apache/XAMPP root mode)
+// Direct Public Storage File Serving Route (Guarantees seamless file serving across all hostings & XAMPP)
 Route::get('storage/{path}', function ($path) {
-    $filePath = storage_path('app/public/' . $path);
-    if (!file_exists($filePath)) {
-        abort(404);
+    $candidates = [
+        storage_path('app/public/' . $path),
+        public_path('storage/' . $path),
+        storage_path('app/' . $path),
+    ];
+
+    foreach ($candidates as $filePath) {
+        if (file_exists($filePath) && is_file($filePath)) {
+            return response()->file($filePath, [
+                'Cache-Control' => 'public, max-age=86400',
+            ]);
+        }
     }
-    return response()->file($filePath);
+
+    abort(404);
 })->where('path', '.*')->name('storage.local');
 

@@ -181,4 +181,27 @@ class FrontendAndHeroTest extends TestCase
         $res->assertRedirect(route('admin.hero-slides.index'));
         $this->assertDatabaseMissing('hero_slides', ['id' => $slide->id]);
     }
+
+    public function test_storage_file_route_serves_uploaded_file(): void
+    {
+        Storage::fake('public');
+        $file = UploadedFile::fake()->image('test_service.jpg');
+        $storedPath = $file->store('services', 'public');
+
+        // Create the actual file in storage path for the route test
+        $fullPath = storage_path('app/public/' . $storedPath);
+        if (!file_exists(dirname($fullPath))) {
+            mkdir(dirname($fullPath), 0777, true);
+        }
+        file_put_contents($fullPath, 'fake-image-content');
+
+        $res = $this->get('/storage/' . $storedPath);
+        $res->assertStatus(200);
+
+        // Cleanup
+        if (file_exists($fullPath)) {
+            unlink($fullPath);
+        }
+    }
 }
+
