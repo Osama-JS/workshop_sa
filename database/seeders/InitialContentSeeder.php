@@ -108,6 +108,17 @@ class InitialContentSeeder extends Seeder
         // 2. About Sections
         $aboutSections = [
             [
+                'section_key' => 'about',
+                'title_ar' => 'من نحن - ورشة أرتيزان للأعمال الخشبية الفاخرة',
+                'title_en' => 'About Us - Artisan Luxury Woodworking Workshop',
+                'subtitle_ar' => 'صرح سعودي رائد في هندسة وتفصيل الخشب الطبيعي والديكورات الراقية',
+                'subtitle_en' => 'A leading Saudi powerhouse in bespoke timber engineering and luxury interior decor',
+                'content_ar' => '<p>نحن في ورشة أرتيزان نفخر بكوننا أحد أبرز الصروح المتخصصة في النجارة المعمارية وتفصيل الأثاث الخشبي الفاخر في المملكة العربية السعودية. نعتمد على كوادر فنية وحرفيين ذوي خبرات عريقة، ونوظف أحدث ما توصلت إليه التكنولوجيا لنلبي تطلعات القصور والمكاتب والمعارض والمشاريع التجارية الكبرى بدقة متناهية وجودة تفوق التوقعات.</p>',
+                'content_en' => '<p>At Artisan Workshop, we take immense pride in being one of the premier workshops dedicated to architectural joinery and luxury custom woodwork in Saudi Arabia. Combining master artisan hands with state-of-the-art CNC technology, we craft bespoke furniture and timber interiors that exceed expectations for residences, commercial spaces, and exhibition stands.</p>',
+                'meta_data' => null,
+                'sort_order' => 1,
+            ],
+            [
                 'section_key' => 'story',
                 'title_ar' => 'قصتنا وشغفنا بالخشب',
                 'title_en' => 'Our Story & Woodcraft Passion',
@@ -116,7 +127,7 @@ class InitialContentSeeder extends Seeder
                 'content_ar' => '<p>تأسست ورشة أرتيزان برؤية واضحة: إعادة تعريف مفهوم النجارة والديكور الخشبي في المملكة العربية السعودية. نمزج بين الحرفية اليدوية الأصيلة وأحدث مكائن الـ CNC لتقديم تصاميم حصرية تلبي تطلعات عشاق الفخامة.</p>',
                 'content_en' => '<p>Artisan Workshop was established with a clear vision: redefine woodworking and joinery standards in Saudi Arabia. We blend authentic handcraftsmanship with advanced CNC precision machinery.</p>',
                 'meta_data' => null,
-                'sort_order' => 1,
+                'sort_order' => 2,
             ],
             [
                 'section_key' => 'vision_mission',
@@ -127,7 +138,47 @@ class InitialContentSeeder extends Seeder
                 'content_ar' => '<p><strong>رؤيتنا:</strong> أن نكون الخيار الأول والوجهة الموثوقة للأفراد والشركات في تنفيذ المشاريع الخشبية الفاخرة.<br><strong>رسالتنا:</strong> تقديم حلول خشبية مخصصة تجمع بين المتانة العالية والجمال الخالد مع الالتزام التام بالمواعيد والمواصفات.</p>',
                 'content_en' => '<p><strong>Our Vision:</strong> To be the premier destination for luxury bespoke woodwork in the region.<br><strong>Our Mission:</strong> Delivering tailor-made timber solutions marrying structural durability with timeless beauty on exact schedules.</p>',
                 'meta_data' => null,
-                'sort_order' => 2,
+                'sort_order' => 3,
+            ],
+            [
+                'section_key' => 'values',
+                'title_ar' => 'قيمنا ومبادئ عملنا الراسخة',
+                'title_en' => 'Our Enduring Core Values',
+                'subtitle_ar' => 'المبادئ السامية التي تحكم كل مرحلة في ورشتنا',
+                'subtitle_en' => 'The guiding principles behind every creation in our workshop',
+                'content_ar' => null,
+                'content_en' => null,
+                'meta_data' => [
+                    [
+                        'title_ar' => 'الإتقان والجودة المطلقة',
+                        'title_en' => 'Uncompromising Quality',
+                        'icon' => 'fa-solid fa-gem',
+                        'desc_ar' => 'اختيار أرقى أخشاب الزان، البلوط، والجوز المعالج بأعلى المعايير العالمية لضمان الديمومة والفخامة.',
+                        'desc_en' => 'Selecting the finest seasoned oak, walnut, and beech wood adhering to international luxury standards.'
+                    ],
+                    [
+                        'title_ar' => 'الحرفية والابتكار',
+                        'title_en' => 'Craftsmanship & Innovation',
+                        'icon' => 'fa-solid fa-wand-magic-sparkles',
+                        'desc_ar' => 'المزج الخلاق بين المهارة اليدوية التراثية الأصيلة ودقة الماكينات الرقمية الحديثة لابتكار تفاصيل فريدة.',
+                        'desc_en' => 'Seamlessly combining traditional artisanal woodwork with state-of-the-art CNC machining precision.'
+                    ],
+                    [
+                        'title_ar' => 'الالتزام والشفافية',
+                        'title_en' => 'Commitment & Trust',
+                        'icon' => 'fa-solid fa-handshake-simple',
+                        'desc_ar' => 'احترام المواعيد المحددة للتسليم والوضوح الكامل في كل مرحلة من مراحل التصميم والتركيب.',
+                        'desc_en' => 'Strict adherence to project timelines and absolute transparency throughout design, manufacturing, and installation.'
+                    ],
+                    [
+                        'title_ar' => 'الاستدامة والأصالة',
+                        'title_en' => 'Sustainability & Heritage',
+                        'icon' => 'fa-solid fa-tree',
+                        'desc_ar' => 'الاعتماد على مصادر أخشاب مستدامة ومعتمدة بيئياً، والحفاظ على أصالة الحرفة السعودية العريقة.',
+                        'desc_en' => 'Sourcing certified eco-friendly timber and preserving the authentic Saudi craft heritage with timeless appeal.'
+                    ]
+                ],
+                'sort_order' => 4,
             ],
             [
                 'section_key' => 'stats',
@@ -143,7 +194,7 @@ class InitialContentSeeder extends Seeder
                     ['number' => '85+', 'label_ar' => 'بوث معرض تم تنفيذه', 'label_en' => 'Exhibition Stands Built'],
                     ['number' => '99%', 'label_ar' => 'نسبة رضا العملاء', 'label_en' => 'Client Satisfaction Rate'],
                 ],
-                'sort_order' => 3,
+                'sort_order' => 5,
             ],
         ];
 

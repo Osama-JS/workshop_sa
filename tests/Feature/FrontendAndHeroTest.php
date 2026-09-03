@@ -76,7 +76,8 @@ class FrontendAndHeroTest extends TestCase
     {
         $res = $this->withSession(['locale' => 'ar'])->get(route('about'));
         $res->assertStatus(200);
-        $res->assertSee('من نحن وقصة ورشتنا');
+        $res->assertSee('من نحن');
+        $res->assertSee('قيمنا');
     }
 
     public function test_custom_page_frontend(): void

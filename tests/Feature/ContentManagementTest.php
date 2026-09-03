@@ -152,6 +152,14 @@ class ContentManagementTest extends TestCase
         $admin = $this->getSuperAdmin();
 
         $res = $this->actingAs($admin)->put(route('admin.about.update'), [
+            'about' => [
+                'title_ar' => 'من نحن - ورشة أرتيزان الفاخرة',
+                'title_en' => 'About Us - Artisan Luxury Woodwork',
+                'subtitle_ar' => 'صرح سعودي رائد في الديكور الخشبي',
+                'subtitle_en' => 'Leading Saudi Woodwork Powerhouse',
+                'content_ar' => '<p>نبذة تعريفية شاملة...</p>',
+                'content_en' => '<p>Comprehensive overview...</p>',
+            ],
             'story' => [
                 'title_ar' => 'قصة ورشتنا الفاخرة',
                 'title_en' => 'Our Luxury Workshop Story',
@@ -164,6 +172,28 @@ class ContentManagementTest extends TestCase
                 'content_ar' => 'تقديم أرقى التحف الخشبية',
                 'content_en' => 'Delivering premium woodwork',
             ],
+            'values' => [
+                'title_ar' => 'قيمنا ومبادئنا الراسخة',
+                'title_en' => 'Our Enduring Core Values',
+                'subtitle_ar' => 'المبادئ السامية التي تحكم عملنا',
+                'subtitle_en' => 'Our Guiding Principles',
+                'items' => [
+                    [
+                        'title_ar' => 'الإتقان والجودة',
+                        'title_en' => 'Uncompromising Quality',
+                        'icon' => 'fa-solid fa-gem',
+                        'desc_ar' => 'اختيار أفضل الأخشاب',
+                        'desc_en' => 'Selecting finest woods',
+                    ],
+                    [
+                        'title_ar' => 'الحرفية والابتكار',
+                        'title_en' => 'Craftsmanship & Innovation',
+                        'icon' => 'fa-solid fa-wand-magic-sparkles',
+                        'desc_ar' => 'تصاميم يدوية ورقمية',
+                        'desc_en' => 'Artisanal & CNC designs',
+                    ]
+                ]
+            ],
             'stats' => [
                 'counters' => [
                     ['number' => '20+', 'label_ar' => 'سنة من الخبرة', 'label_en' => 'Years Experience'],
@@ -173,8 +203,16 @@ class ContentManagementTest extends TestCase
         ]);
 
         $res->assertRedirect();
+
+        $about = AboutSection::where('section_key', 'about')->first();
+        $this->assertEquals('من نحن - ورشة أرتيزان الفاخرة', $about->title_ar);
+
         $story = AboutSection::where('section_key', 'story')->first();
         $this->assertEquals('قصة ورشتنا الفاخرة', $story->title_ar);
+
+        $values = AboutSection::where('section_key', 'values')->first();
+        $this->assertEquals('قيمنا ومبادئنا الراسخة', $values->title_ar);
+        $this->assertCount(2, $values->meta_data);
 
         $stats = AboutSection::where('section_key', 'stats')->first();
         $this->assertCount(2, $stats->meta_data);
