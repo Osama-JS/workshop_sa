@@ -1,0 +1,19 @@
+<IfModule mod_rewrite.c>
+    Options -Indexes
+    RewriteEngine On
+
+    # Deny access to sensitive storage directories
+    RewriteRule ^framework/ - [F,L]
+    RewriteRule ^logs/ - [F,L]
+    RewriteRule ^app/private/ - [F,L]
+
+    # Automatically map any storage/{subfolder}/{file} to app/public/{subfolder}/{file}
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^(.*)$ app/public/$1 [L]
+</IfModule>
+
+<IfModule mod_authz_core.c>
+    <RequireAll>
+        Require all granted
+    </RequireAll>
+</IfModule>
