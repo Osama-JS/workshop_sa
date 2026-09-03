@@ -19,17 +19,42 @@ use Illuminate\Support\Facades\Route;
 Route::get('locale/{locale}', [LocaleController::class, 'switch'])->name('locale.switch');
 Route::get('lang/{locale}', [LocaleController::class, 'switch']);
 
-// One-Click Storage Link Generator for cPanel / Shared Hostings (Auto-replaces broken links)
+// One-Click Storage Link & Permissions Generator (Auto-fixes permissions & broken links)
 Route::get('/storage-link', function () {
     $link = public_path('storage');
     $target = storage_path('app/public');
 
-    // If link already exists (often broken from previous OS/upload), remove it safely
+    // 1. Ensure all storage and public folders exist and have write permissions
+    $directories = [
+        storage_path('app'),
+        storage_path('app/public'),
+        storage_path('app/public/settings'),
+        storage_path('app/public/services'),
+        storage_path('app/public/portfolios'),
+        storage_path('app/public/about'),
+        storage_path('app/public/hero_slides'),
+        storage_path('app/public/orders'),
+        storage_path('app/public/ai_ideas'),
+        storage_path('app/public/ai_chat'),
+        storage_path('framework/cache'),
+        storage_path('framework/sessions'),
+        storage_path('framework/views'),
+        storage_path('logs'),
+        base_path('bootstrap/cache'),
+    ];
+
+    foreach ($directories as $dir) {
+        if (!file_exists($dir)) {
+            @mkdir($dir, 0777, true);
+        }
+        @chmod($dir, 0777);
+    }
+
+    // 2. If link already exists (often broken from previous OS/upload), remove it safely
     if (file_exists($link) || is_link($link)) {
         if (is_link($link)) {
             @unlink($link);
         } elseif (is_dir($link)) {
-            // Check if it's an empty folder
             $files = @scandir($link);
             if (count($files) <= 2) {
                 @rmdir($link);
@@ -41,7 +66,7 @@ Route::get('/storage-link', function () {
         \Illuminate\Support\Facades\Artisan::call('storage:link');
         $output = trim(\Illuminate\Support\Facades\Artisan::output());
         return response("<div style='font-family:sans-serif;padding:40px;text-align:center;direction:rtl;'>
-            <h2 style='color:#16a34a;'>✅ تم تجديد وإنشاء رابط التخزين بنجاح!</h2>
+            <h2 style='color:#16a34a;'>✅ تم إنشاء كافة مجلدات التخزين وضبط الصلاحيات والرابط بنجاح!</h2>
             <p style='color:#64748b;'>{$output}</p>
             <br><a href='/' style='display:inline-block;padding:10px 24px;background:#b88b64;color:#fff;border-radius:12px;text-decoration:none;font-weight:bold;'>العودة إلى الموقع</a>
         </div>");
