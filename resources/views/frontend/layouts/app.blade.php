@@ -766,7 +766,7 @@
                     @endif
                 </div>
                 <p class="text-xs text-slate-400 leading-relaxed">
-                    {{ \App\Models\Setting::get('footer_desc_' . app()->getLocale(), 'ورشة أعمال خشبية متخصصة في صناعة غرف النوم، المكاتب التنفيذية، وبوثات المعارض والديكورات والتكسيات بأعلى معايير الإتقان والحرفية.') }}
+                    {{ \App\Models\Setting::get('site_footer_desc_' . app()->getLocale()) ?: \App\Models\Setting::get('footer_desc_' . app()->getLocale(), (app()->getLocale() === 'ar' ? 'ورشة متخصصة في تنفيذ أرقى أعمال النجارة والديكورات الخشبية التخصصية، غرف النوم الفاخرة، المكاتب التنفيذية، وبوثات المعارض بأحدث معايير الجودة والحرفية.' : 'Specialized woodworking workshop crafting luxury custom furniture, bedrooms, executive offices and exhibition stands.')) }}
                 </p>
                 <!-- Social links (All Configured Channels from DB) -->
                 <div class="flex items-center flex-wrap gap-2.5 pt-2">
@@ -863,28 +863,62 @@
             <!-- Col 4: Contact & Location -->
             <div class="space-y-4">
                 <h4 class="text-white font-bold text-sm tracking-wide flex items-center gap-2">
-                    <i class="fa-solid fa-location-dot text-gold-500 text-xs"></i>
+                    <i class="fa-solid fa-headset text-gold-500 text-xs"></i>
                     <span>{{ app()->getLocale() === 'ar' ? 'تواصل معنا' : 'Contact Us' }}</span>
                 </h4>
-                <div class="space-y-2.5 text-xs text-slate-400">
-                    @if($addr = \App\Models\Setting::get('address_' . app()->getLocale()))
-                        <p class="flex items-start gap-2">
-                            <i class="fa-solid fa-map-pin text-wood-500 mt-1"></i>
-                            <span>{{ $addr }}</span>
-                        </p>
+                <div class="space-y-3 text-xs text-slate-300">
+                    @php
+                        $footerPhone = \App\Models\Setting::get('contact_phone') ?: \App\Models\Setting::get('phone');
+                        $footerWhatsapp = \App\Models\Setting::get('contact_whatsapp') ?: \App\Models\Setting::get('whatsapp');
+                        $footerEmail = \App\Models\Setting::get('contact_email') ?: \App\Models\Setting::get('email');
+                        $footerAddress = \App\Models\Setting::get('contact_address_' . app()->getLocale()) 
+                                        ?: \App\Models\Setting::get('address_' . app()->getLocale()) 
+                                        ?: (app()->getLocale() === 'ar' ? 'المملكة العربية السعودية، الرياض، المنطقة الصناعية' : 'Riyadh, Saudi Arabia');
+                        $footerHours = \App\Models\Setting::get('working_hours_' . app()->getLocale()) 
+                                      ?: (app()->getLocale() === 'ar' ? 'السبت - الخميس: 8:00 ص - 9:00 م' : 'Sat - Thu: 8:00 AM - 9:00 PM');
+                    @endphp
+
+                    @if($footerAddress)
+                        <div class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-location-dot text-gold-500 text-sm mt-0.5 shrink-0"></i>
+                            <span class="leading-relaxed">{{ $footerAddress }}</span>
+                        </div>
                     @endif
-                    @if($phone = \App\Models\Setting::get('phone'))
-                        <p class="flex items-center gap-2">
-                            <i class="fa-solid fa-phone text-wood-500"></i>
-                            <a href="tel:{{ $phone }}" dir="ltr" class="hover:text-white">{{ $phone }}</a>
-                        </p>
+
+                    @if($footerPhone)
+                        <div class="flex items-center gap-2.5">
+                            <i class="fa-solid fa-phone text-gold-500 text-sm shrink-0"></i>
+                            <a href="tel:{{ preg_replace('/[^\+0-9]/', '', $footerPhone) }}" dir="ltr" class="hover:text-gold-400 transition font-mono font-medium">{{ $footerPhone }}</a>
+                        </div>
                     @endif
-                    @if($email = \App\Models\Setting::get('email'))
-                        <p class="flex items-center gap-2">
-                            <i class="fa-solid fa-envelope text-wood-500"></i>
-                            <a href="mailto:{{ $email }}" class="hover:text-white">{{ $email }}</a>
-                        </p>
+
+                    @if($footerWhatsapp)
+                        <div class="flex items-center gap-2.5">
+                            <i class="fa-brands fa-whatsapp text-emerald-400 text-sm shrink-0"></i>
+                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $footerWhatsapp) }}" target="_blank" dir="ltr" class="hover:text-emerald-300 transition font-mono font-medium">{{ $footerWhatsapp }}</a>
+                        </div>
                     @endif
+
+                    @if($footerEmail)
+                        <div class="flex items-center gap-2.5">
+                            <i class="fa-solid fa-envelope text-gold-500 text-sm shrink-0"></i>
+                            <a href="mailto:{{ $footerEmail }}" class="hover:text-gold-400 transition">{{ $footerEmail }}</a>
+                        </div>
+                    @endif
+
+                    @if($footerHours)
+                        <div class="flex items-center gap-2.5 text-slate-400 text-[11px] pt-1">
+                            <i class="fa-regular fa-clock text-gold-500/80 text-sm shrink-0"></i>
+                            <span>{{ $footerHours }}</span>
+                        </div>
+                    @endif
+                </div>
+
+                <div class="pt-1">
+                    <a href="{{ route('contact') }}" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/5 hover:bg-gold-500/20 text-gold-400 border border-gold-500/30 text-xs font-bold transition">
+                        <i class="fa-solid fa-paper-plane text-[10px]"></i>
+                        <span>{{ app()->getLocale() === 'ar' ? 'صفحة التواصل المباشر' : 'Contact Us Page' }}</span>
+                    </a>
                 </div>
             </div>
         </div>
