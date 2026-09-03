@@ -930,6 +930,8 @@
     let quillAboutAr, quillAboutEn, quillStoryAr, quillStoryEn, quillVisionAr, quillVisionEn;
     let counterIndex = {{ count($counters) }};
     let valueIndex = {{ count($valueItems) }};
+    let whyUsIndex = {{ count($whyItems) }};
+    let processIndex = {{ count($processSteps) }};
 
     // Curated Library of FontAwesome 6 Icons for Values & Joinery
     const FA_ICONS_LIBRARY = [
@@ -1164,11 +1166,6 @@
         container.appendChild(row);
         valueIndex++;
     }
-
-    let counterIndex = {{ count($counters) }};
-    let valueIndex = {{ count($valueItems) }};
-    let whyUsIndex = {{ count($whyItems) }};
-    let processIndex = {{ count($processSteps) }};
 
     function addWhyUsRow() {
         const container = document.getElementById('whyUsContainer');

@@ -13,17 +13,12 @@
     
     <!-- Global CDN FontAwesome 6.5.1 Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('vendor/fontawesome/all.min.css') }}">
     
-    <!-- Vendor CSS (CDN + Local Fallback) -->
+    <!-- Vendor CSS (CDN) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.snow.min.css">
-    <link rel="stylesheet" href="{{ asset('vendor/select2/select2.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('vendor/toastr/toastr.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('vendor/flatpickr/flatpickr.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('vendor/quill/quill.snow.css') }}">
 
     <!-- Tailwind CSS (CDN / Play) -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -65,19 +60,13 @@
         }
     </script>
 
-    <!-- Core JS (CDN + Local Fallback) loaded in head to ensure availability -->
+    <!-- Core JS (Reliable CDNs) loaded in head to ensure availability for child views -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="{{ asset('vendor/jquery/jquery.min.js') }}"><\/script>')</script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>window.Swal || document.write('<script src="{{ asset('vendor/sweetalert2/sweetalert2.all.min.js') }}"><\/script>')</script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
-    <script>window.toastr || document.write('<script src="{{ asset('vendor/toastr/toastr.min.js') }}"><\/script>')</script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-    <script>window.jQuery && window.jQuery.fn.select2 || document.write('<script src="{{ asset('vendor/select2/select2.min.js') }}"><\/script>')</script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
-    <script>window.flatpickr || document.write('<script src="{{ asset('vendor/flatpickr/flatpickr.min.js') }}"><\/script>')</script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.min.js"></script>
-    <script>window.Quill || document.write('<script src="{{ asset('vendor/quill/quill.js') }}"><\/script>')</script>
 
     <style>
         body {

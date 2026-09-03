@@ -59,9 +59,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
-    <link rel="stylesheet" href="{{ asset('vendor/fontawesome/all.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('vendor/toastr/toastr.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('vendor/select2/select2.min.css') }}">
 
     @php
         $primaryColor = \App\Models\Setting::get('primary_color', '#b88b64');
