@@ -148,6 +148,24 @@
                     </div>
                 </div>
 
+                <!-- Logo Height in Pixels -->
+                <div class="space-y-3 p-5 bg-slate-50/70 rounded-2xl border border-slate-200/70">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-bold text-slate-800 flex items-center gap-2" for="logo_height_input">
+                            <i class="fa-solid fa-arrows-up-down text-wood-600"></i>
+                            <span>ارتفاع الشعار في شريط التنقل العلوي (Logo Height in Navbar):</span>
+                        </label>
+                        <span class="text-xs font-mono font-bold text-wood-700 bg-wood-100 px-3 py-1 rounded-xl">
+                            <span id="logo_height_display">{{ $allSettings['logo_height']->value ?? '70' }}</span>px
+                        </span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <input type="range" min="40" max="130" value="{{ $allSettings['logo_height']->value ?? '70' }}" class="w-full accent-wood-600 cursor-pointer" oninput="document.getElementById('logo_height_display').innerText = this.value; document.getElementById('logo_height_input').value = this.value;">
+                        <input type="number" name="logo_height" id="logo_height_input" value="{{ $allSettings['logo_height']->value ?? '70' }}" min="40" max="130" class="w-20 px-3 py-1.5 text-xs text-center border border-slate-200 rounded-xl font-mono font-bold" oninput="document.getElementById('logo_height_display').innerText = this.value;">
+                    </div>
+                    <p class="text-[11px] text-slate-400">القيمة الافتراضية الموصى بها (65px - 85px) لضمان ظهور الشعار بشكل كبير وفاخر وواضح.</p>
+                </div>
+
                 <!-- Company Name AR & EN -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>

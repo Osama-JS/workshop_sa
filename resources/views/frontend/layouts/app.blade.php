@@ -497,74 +497,65 @@
 <body class="antialiased selection:bg-gold-500 selection:text-slate-950">
 
     <!-- Top Luxury Announcement & Quick Contact Bar -->
-    <div class="bg-dark-950 border-b border-white/5 py-2 px-4 text-xs text-slate-400 hidden sm:block">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <div class="flex items-center gap-6">
-                @if($phone = \App\Models\Setting::get('phone'))
-                    <a href="tel:{{ $phone }}" class="flex items-center gap-2 hover:text-gold-400 transition">
-                        <i class="fa-solid fa-phone text-gold-500"></i>
+    <div class="bg-dark-950 border-b border-white/5 py-2 px-3 sm:px-6 text-[11px] sm:text-xs text-slate-400">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
+            <!-- Contact Quick Details -->
+            <div class="flex items-center gap-3 sm:gap-6 overflow-x-auto no-scrollbar py-0.5">
+                @if($phone = \App\Models\Setting::get('contact_phone') ?: \App\Models\Setting::get('phone'))
+                    <a href="tel:{{ $phone }}" class="flex items-center gap-1.5 hover:text-gold-400 transition whitespace-nowrap font-medium">
+                        <i class="fa-solid fa-phone text-gold-500 text-[10px] sm:text-xs"></i>
                         <span dir="ltr">{{ $phone }}</span>
                     </a>
                 @endif
-                @if($email = \App\Models\Setting::get('email'))
-                    <a href="mailto:{{ $email }}" class="flex items-center gap-2 hover:text-gold-400 transition">
-                        <i class="fa-solid fa-envelope text-gold-500"></i>
+                @if($email = \App\Models\Setting::get('contact_email') ?: \App\Models\Setting::get('email'))
+                    <a href="mailto:{{ $email }}" class="hidden xs:flex items-center gap-1.5 hover:text-gold-400 transition whitespace-nowrap font-medium">
+                        <i class="fa-solid fa-envelope text-gold-500 text-[10px] sm:text-xs"></i>
                         <span>{{ $email }}</span>
                     </a>
                 @endif
                 @if($hours = \App\Models\Setting::get('working_hours_' . app()->getLocale()))
-                    <span class="flex items-center gap-2 text-slate-400">
-                        <i class="fa-regular fa-clock text-gold-500"></i>
+                    <span class="hidden md:flex items-center gap-1.5 text-slate-400 whitespace-nowrap">
+                        <i class="fa-regular fa-clock text-gold-500 text-[10px] sm:text-xs"></i>
                         <span>{{ $hours }}</span>
                     </span>
                 @endif
             </div>
 
-            <div class="flex items-center gap-4">
-                <!-- Social Icons Top Bar (All Configured Channels from DB) -->
-                <div class="flex items-center gap-3 text-slate-400">
+            <div class="flex items-center gap-3 sm:gap-4 shrink-0">
+                <!-- Social Icons Top Bar -->
+                <div class="flex items-center gap-2 sm:gap-3 text-slate-400">
                     @if($wa = (\App\Models\Setting::get('contact_whatsapp') ?? \App\Models\Setting::get('whatsapp') ?? \App\Models\Setting::get('contact_phone')))
-                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $wa) }}" target="_blank" class="hover:text-emerald-400 transition" title="WhatsApp">
+                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $wa) }}" target="_blank" class="hover:text-emerald-400 transition text-xs sm:text-sm" title="WhatsApp">
                             <i class="fa-brands fa-whatsapp"></i>
                         </a>
                     @endif
                     @if($ig = (\App\Models\Setting::get('social_instagram') ?? \App\Models\Setting::get('instagram_url')))
-                        <a href="{{ $ig }}" target="_blank" class="hover:text-pink-400 transition" title="Instagram">
+                        <a href="{{ $ig }}" target="_blank" class="hover:text-pink-400 transition text-xs sm:text-sm" title="Instagram">
                             <i class="fa-brands fa-instagram"></i>
                         </a>
                     @endif
                     @if($x = (\App\Models\Setting::get('social_x') ?? \App\Models\Setting::get('twitter_url')))
-                        <a href="{{ $x }}" target="_blank" class="hover:text-white transition" title="X (Twitter)">
+                        <a href="{{ $x }}" target="_blank" class="hover:text-white transition text-xs sm:text-sm" title="X (Twitter)">
                             <i class="fa-brands fa-x-twitter"></i>
                         </a>
                     @endif
                     @if($tiktok = (\App\Models\Setting::get('social_tiktok') ?? \App\Models\Setting::get('tiktok_url')))
-                        <a href="{{ $tiktok }}" target="_blank" class="hover:text-cyan-400 transition" title="TikTok">
+                        <a href="{{ $tiktok }}" target="_blank" class="hover:text-cyan-400 transition text-xs sm:text-sm" title="TikTok">
                             <i class="fa-brands fa-tiktok"></i>
                         </a>
                     @endif
                     @if($snap = (\App\Models\Setting::get('social_snapchat') ?? \App\Models\Setting::get('snapchat_url')))
-                        <a href="{{ $snap }}" target="_blank" class="hover:text-amber-300 transition" title="Snapchat">
+                        <a href="{{ $snap }}" target="_blank" class="hover:text-amber-300 transition text-xs sm:text-sm" title="Snapchat">
                             <i class="fa-brands fa-snapchat"></i>
-                        </a>
-                    @endif
-                    @if($linkedin = (\App\Models\Setting::get('social_linkedin') ?? \App\Models\Setting::get('linkedin_url')))
-                        <a href="{{ $linkedin }}" target="_blank" class="hover:text-blue-400 transition" title="LinkedIn">
-                            <i class="fa-brands fa-linkedin-in"></i>
-                        </a>
-                    @endif
-                    @if($yt = (\App\Models\Setting::get('social_youtube') ?? \App\Models\Setting::get('youtube_url')))
-                        <a href="{{ $yt }}" target="_blank" class="hover:text-rose-400 transition" title="YouTube">
-                            <i class="fa-brands fa-youtube"></i>
                         </a>
                     @endif
                 </div>
 
-                <div class="h-3.5 w-px bg-white/10"></div>
+                <div class="hidden sm:block h-3.5 w-px bg-white/10"></div>
 
-                <!-- Luxury Language Switcher Top Bar -->
+                <!-- Language Switcher: Hidden on small screens (only on sm+), since it's prominent in the mobile drawer -->
                 <a href="{{ route('locale.switch', app()->getLocale() === 'ar' ? 'en' : 'ar') }}" 
-                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-gold-500/30 bg-white/5 hover:bg-gold-500/15 text-slate-200 hover:text-gold-400 text-xs font-bold transition-all duration-300 shadow-xs group"
+                    class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-gold-500/30 bg-white/5 hover:bg-gold-500/15 text-slate-200 hover:text-gold-400 text-xs font-bold transition-all duration-300 shadow-xs group"
                     title="{{ app()->getLocale() === 'ar' ? 'Switch to English' : 'التحويل للغة العربية' }}">
                     <i class="fa-solid fa-globe text-gold-400 group-hover:rotate-45 transition-transform duration-300 text-[11px]"></i>
                     <span class="font-mono">{{ app()->getLocale() === 'ar' ? 'English' : 'عربي' }}</span>
@@ -576,21 +567,27 @@
 
     <!-- Main Navigation Header -->
     <header class="sticky top-0 z-50 glass-nav transition-all duration-300">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 sm:h-24 flex items-center justify-between">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[72px] sm:min-h-[84px] py-2 flex items-center justify-between">
             <!-- Brand Logo -->
             @php
                 $logoDisplayMode = \App\Models\Setting::get('logo_display_mode', 'logo_only');
+                $logoHeight = (int) (\App\Models\Setting::get('logo_height', '70'));
+                if ($logoHeight < 40) $logoHeight = 70;
                 $logo = \App\Models\Setting::get('site_logo');
                 $siteName = \App\Models\Setting::get('site_name_' . app()->getLocale(), 'أرتيزان للأعمال الخشبية');
                 $siteSlogan = \App\Models\Setting::get('site_slogan_' . app()->getLocale(), 'للأعمال الخشبية الفاخرة');
             @endphp
             <a href="{{ route('home') }}" class="flex items-center gap-3.5 group py-1">
                 @if($logoDisplayMode === 'logo_only' && $logo)
-                    <!-- Mode: Logo Only (Prominent, High-Visibility, Large Display) -->
-                    <img src="{{ storage_asset($logo) }}" alt="{{ $siteName }}" class="h-14 sm:h-16 md:h-20 max-w-[260px] sm:max-w-[320px] w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-md">
+                    <!-- Mode: Logo Only (Dynamic Height from Settings) -->
+                    <img src="{{ storage_asset($logo) }}" alt="{{ $siteName }}" 
+                         style="height: {{ $logoHeight }}px; max-height: 120px;"
+                         class="max-w-[240px] sm:max-w-[340px] w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-md">
                 @elseif($logoDisplayMode === 'both' && $logo)
                     <!-- Mode: Logo & Text -->
-                    <img src="{{ storage_asset($logo) }}" alt="{{ $siteName }}" class="h-12 sm:h-14 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
+                    <img src="{{ storage_asset($logo) }}" alt="{{ $siteName }}" 
+                         style="height: {{ min($logoHeight, 60) }}px;"
+                         class="w-auto object-contain transition-transform duration-300 group-hover:scale-105">
                     <div>
                         <span class="font-black text-lg sm:text-xl text-white tracking-wide block leading-tight">
                             {{ $siteName }}
@@ -654,65 +651,86 @@
             </div>
 
             <!-- Mobile Hamburger Button -->
-            <button onclick="toggleMobileNav()" class="lg:hidden p-2 rounded-xl bg-white/5 text-slate-300 hover:text-white border border-white/10">
+            <button onclick="toggleMobileNav()" class="lg:hidden p-2.5 rounded-xl bg-white/5 text-slate-300 hover:text-white border border-white/10 transition" aria-label="Toggle Navigation">
                 <i class="fa-solid fa-bars text-xl"></i>
             </button>
         </div>
     </header>
 
     <!-- Mobile Offcanvas Menu Drawer -->
-    <div id="mobileDrawer" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-md hidden transition-opacity">
-        <div class="fixed top-0 bottom-0 {{ app()->getLocale() === 'ar' ? 'right-0' : 'left-0' }} w-80 bg-dark-900 border-{{ app()->getLocale() === 'ar' ? 'l' : 'r' }} border-white/10 p-6 flex flex-col justify-between shadow-2xl">
-            <div>
+    <div id="mobileDrawer" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-lg hidden transition-all duration-300">
+        <div class="fixed top-0 bottom-0 {{ app()->getLocale() === 'ar' ? 'right-0' : 'left-0' }} w-84 max-w-[85vw] bg-dark-900 border-{{ app()->getLocale() === 'ar' ? 'l' : 'r' }} border-white/10 p-6 flex flex-col justify-between shadow-2xl overflow-y-auto">
+            <div class="space-y-6">
                 <!-- Header in Drawer -->
-                <div class="flex items-center justify-between border-b border-white/10 pb-4 mb-6">
-                    <span class="font-bold text-white text-base">{{ \App\Models\Setting::get('site_name_' . app()->getLocale(), 'أرتيزان') }}</span>
-                    <button onclick="toggleMobileNav()" class="p-2 text-slate-400 hover:text-white">
-                        <i class="fa-solid fa-xmark text-xl"></i>
+                <div class="flex items-center justify-between border-b border-white/10 pb-4">
+                    <a href="{{ route('home') }}" onclick="toggleMobileNav()" class="flex items-center gap-2.5">
+                        @if(($logoDisplayMode === 'logo_only' || $logoDisplayMode === 'both') && $logo)
+                            <img src="{{ storage_asset($logo) }}" alt="{{ $siteName }}" class="h-10 max-w-[160px] w-auto object-contain">
+                        @else
+                            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-wood-600 to-wood-800 flex items-center justify-center text-white text-base shadow-md border border-gold-500/40">
+                                <i class="fa-solid fa-tree"></i>
+                            </div>
+                            <span class="font-black text-white text-sm">{{ $siteName }}</span>
+                        @endif
+                    </a>
+                    <button onclick="toggleMobileNav()" class="w-9 h-9 rounded-xl bg-white/5 border border-white/10 text-slate-400 hover:text-white flex items-center justify-center transition">
+                        <i class="fa-solid fa-xmark text-lg"></i>
                     </button>
                 </div>
 
-                <!-- Nav Links -->
-                <div class="space-y-3 font-semibold text-sm">
-                    <a href="{{ route('home') }}" class="block py-2.5 px-4 rounded-xl hover:bg-white/5 text-slate-200">
-                        {{ app()->getLocale() === 'ar' ? 'الرئيسية' : 'Home' }}
+                <!-- Nav Links with Luxury Icons & Active Pill -->
+                <div class="space-y-1.5 font-bold text-sm">
+                    <a href="{{ route('home') }}" onclick="toggleMobileNav()" class="flex items-center gap-3 py-3 px-4 rounded-2xl transition {{ request()->routeIs('home') ? 'bg-gold-500/15 text-gold-400 border border-gold-500/30' : 'text-slate-200 hover:bg-white/5' }}">
+                        <i class="fa-solid fa-house w-5 text-center text-gold-500"></i>
+                        <span>{{ app()->getLocale() === 'ar' ? 'الرئيسية' : 'Home' }}</span>
                     </a>
-                    <a href="{{ route('services.index') }}" class="block py-2.5 px-4 rounded-xl hover:bg-white/5 text-slate-200">
-                        {{ app()->getLocale() === 'ar' ? 'خدماتنا' : 'Services' }}
+                    <a href="{{ route('services.index') }}" onclick="toggleMobileNav()" class="flex items-center gap-3 py-3 px-4 rounded-2xl transition {{ request()->routeIs('services.*') ? 'bg-gold-500/15 text-gold-400 border border-gold-500/30' : 'text-slate-200 hover:bg-white/5' }}">
+                        <i class="fa-solid fa-couch w-5 text-center text-gold-500"></i>
+                        <span>{{ app()->getLocale() === 'ar' ? 'خدماتنا' : 'Services' }}</span>
                     </a>
-                    <a href="{{ route('portfolio.index') }}" class="block py-2.5 px-4 rounded-xl hover:bg-white/5 text-slate-200">
-                        {{ app()->getLocale() === 'ar' ? 'معرض الأعمال' : 'Portfolio' }}
+                    <a href="{{ route('portfolio.index') }}" onclick="toggleMobileNav()" class="flex items-center gap-3 py-3 px-4 rounded-2xl transition {{ request()->routeIs('portfolio.*') ? 'bg-gold-500/15 text-gold-400 border border-gold-500/30' : 'text-slate-200 hover:bg-white/5' }}">
+                        <i class="fa-solid fa-images w-5 text-center text-gold-500"></i>
+                        <span>{{ app()->getLocale() === 'ar' ? 'معرض الأعمال' : 'Portfolio' }}</span>
                     </a>
-                    <a href="{{ route('about') }}" class="block py-2.5 px-4 rounded-xl hover:bg-white/5 text-slate-200">
-                        {{ app()->getLocale() === 'ar' ? 'من نحن' : 'About Us' }}
+                    <a href="{{ route('about') }}" onclick="toggleMobileNav()" class="flex items-center gap-3 py-3 px-4 rounded-2xl transition {{ request()->routeIs('about') ? 'bg-gold-500/15 text-gold-400 border border-gold-500/30' : 'text-slate-200 hover:bg-white/5' }}">
+                        <i class="fa-solid fa-building w-5 text-center text-gold-500"></i>
+                        <span>{{ app()->getLocale() === 'ar' ? 'من نحن' : 'About Us' }}</span>
                     </a>
-                    <a href="{{ route('contact') }}" class="block py-2.5 px-4 rounded-xl hover:bg-white/5 text-slate-200">
-                        {{ app()->getLocale() === 'ar' ? 'تواصل معنا' : 'Contact Us' }}
+                    <a href="{{ route('contact') }}" onclick="toggleMobileNav()" class="flex items-center gap-3 py-3 px-4 rounded-2xl transition {{ request()->routeIs('contact') ? 'bg-gold-500/15 text-gold-400 border border-gold-500/30' : 'text-slate-200 hover:bg-white/5' }}">
+                        <i class="fa-solid fa-headset w-5 text-center text-gold-500"></i>
+                        <span>{{ app()->getLocale() === 'ar' ? 'تواصل معنا' : 'Contact Us' }}</span>
+                    </a>
+                    <a href="{{ route('order.track') }}" onclick="toggleMobileNav()" class="flex items-center gap-3 py-3 px-4 rounded-2xl transition {{ request()->routeIs('order.track') ? 'bg-gold-500/15 text-gold-400 border border-gold-500/30' : 'text-slate-200 hover:bg-white/5' }}">
+                        <i class="fa-solid fa-magnifying-glass-location w-5 text-center text-gold-500"></i>
+                        <span>{{ app()->getLocale() === 'ar' ? 'تتبع طلبك' : 'Track Order' }}</span>
                     </a>
                     @foreach($navPages as $page)
-                        <a href="{{ route('page.show', $page->slug) }}" class="block py-2.5 px-4 rounded-xl hover:bg-white/5 text-slate-200">
-                            {{ $page->title }}
+                        <a href="{{ route('page.show', $page->slug) }}" onclick="toggleMobileNav()" class="flex items-center gap-3 py-3 px-4 rounded-2xl text-slate-200 hover:bg-white/5 transition">
+                            <i class="fa-solid fa-file-lines w-5 text-center text-gold-500"></i>
+                            <span>{{ $page->title }}</span>
                         </a>
                     @endforeach
                 </div>
             </div>
 
             <!-- Drawer Footer -->
-            <div class="space-y-3 pt-6 border-t border-white/10">
-                <!-- Luxury Dual-State Language Switch Card -->
+            <div class="space-y-4 pt-6 border-t border-white/10 mt-6">
+                <!-- Dual-State Language Switcher Card -->
                 <a href="{{ route('locale.switch', app()->getLocale() === 'ar' ? 'en' : 'ar') }}" 
                     class="w-full py-3 px-4 rounded-2xl bg-white/5 border border-gold-500/30 flex items-center justify-between text-xs font-bold text-slate-200 hover:bg-gold-500/10 hover:text-gold-400 transition">
-                    <span class="flex items-center gap-2">
-                        <i class="fa-solid fa-globe text-gold-500 text-sm"></i>
-                        <span>{{ app()->getLocale() === 'ar' ? 'Change Language / تغيير اللغة' : 'تغيير اللغة / Change Language' }}</span>
+                    <span class="flex items-center gap-2.5">
+                        <i class="fa-solid fa-globe text-gold-500 text-base"></i>
+                        <span>{{ app()->getLocale() === 'ar' ? 'تغيير اللغة (English)' : 'Change Language (العربية)' }}</span>
                     </span>
-                    <span class="px-2 py-1 rounded-lg bg-gold-500/20 text-gold-300 font-extrabold uppercase text-[10px]">
-                        {{ app()->getLocale() === 'ar' ? 'English' : 'العربية' }}
+                    <span class="px-2.5 py-1 rounded-lg bg-gold-500/20 text-gold-300 font-extrabold uppercase text-[10px]">
+                        {{ app()->getLocale() === 'ar' ? 'EN' : 'AR' }}
                     </span>
                 </a>
 
-                <a href="{{ route('order.create') }}" onclick="toggleMobileNav()" class="w-full py-3 rounded-xl bg-gold-gradient text-white font-bold text-center block text-xs shadow-lg">
-                    {{ app()->getLocale() === 'ar' ? 'طلب تفصيل مخصص' : 'Request Quote' }}
+                <!-- Request Quote CTA Button -->
+                <a href="{{ route('order.create') }}" onclick="toggleMobileNav()" class="w-full py-3.5 px-4 rounded-2xl bg-gold-gradient text-slate-950 font-black text-center flex items-center justify-center gap-2 text-xs shadow-xl shadow-gold-500/20 hover:brightness-110 transition">
+                    <i class="fa-solid fa-file-signature"></i>
+                    <span>{{ app()->getLocale() === 'ar' ? 'طلب تفصيل مخصص' : 'Request Custom Quote' }}</span>
                 </a>
             </div>
         </div>
