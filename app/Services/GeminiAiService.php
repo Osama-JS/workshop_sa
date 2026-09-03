@@ -39,14 +39,14 @@ class GeminiAiService
         // 1. Check for in-chat order tracking code pattern
         $trackingOrderInfo = $this->lookupTrackingInfoIfPresent($userMessage);
 
-        // 2. Check if this is the first assistant message in session to introduce himself
+        // 2. Check if this is the first assistant message in session
         $isFirstAssistantMessage = $session->messages()->where('sender', 'assistant')->count() === 0;
 
-        // 3. Build system instructions with live workshop knowledge & strict guardrails
+        // 3. Build system instructions with live workshop knowledge, strict guardrails, and conversation memory
         $systemInstruction = $this->buildSystemInstruction($trackingOrderInfo, $isFirstAssistantMessage);
 
-        // 4. Build contents array with conversation history
-        $contents = $this->buildConversationContents($session, $userMessage, $uploadedImagePath);
+        // 4. Build properly formatted alternating conversation contents array
+        $contents = $this->buildConversationContents($session);
 
         // 5. If API key is available, attempt calling Gemini API
         if (!empty($this->apiKey)) {
@@ -85,7 +85,7 @@ class GeminiAiService
             }
         }
 
-        // 6. Intelligent Fallback Engine (for offline local development or when API key is pending)
+        // 6. Intelligent Fallback Engine with Context Memory
         $fallback = $this->generateFallbackResponse($session, $userMessage, $trackingOrderInfo, $isFirstAssistantMessage);
         $session->recordUsage(100);
         return $fallback;
@@ -151,66 +151,50 @@ class GeminiAiService
             $prompt .= "=== بيانات الطلب المستفسر عنه في النظام حالياً ===\n{$trackingOrderInfo}\n\n";
         }
 
-        $prompt .= "=== قواعد الحماية الصارمة والسلوك والاحترافية (CRITICAL STRICT RULES) ===\n";
-        $prompt .= "1. أنت تعمل حصرياً كمستشار رسمي لمنصة \"{$siteName}\". لا تؤلف أو تخترع أي معلومات من رأسك، والتزم التزاماً تاماً بالبيانات والأسئلة والأجوبة الواردة في بنك المعرفة أعلاه.\n";
-        $prompt .= "2. إذا سألك العميل 'من أنت؟' أو 'عرفني بنفسك'، أجب بتعريف احترافي عن نفسك ووظيفتك وإمكانياتك في مساعدة العميل، دون إدراج بطاقات تصاميم إلا إذا طلب هو ذلك.\n";
-        $prompt .= "3. إذا سألك العميل عن المنصة أو اسمها 'من هي {$siteName}؟' أو 'من أنتم؟' أو 'نبذة عن الورشة'، قدم نبذة وافية وراقية تشمل اختصاصات المنصة، جودتها، عنوانها، ورقم التواصل، دون إدراج بطاقات تصاميم إلا إذا طلب ذلك.\n";
-        $prompt .= "4. لا تقم بإدراج بطاقات التصاميم [DESIGN_CARD:id] إطلاقاً إلا إذا طلب العميل صراحةً رؤية تصاميم أو صور أو أفكار أو نماذج ملهمة (مثل: أريد تصاميم، اقترح علي أفكار، اعرض نماذج، صور غرف نوم).\n";
-        $prompt .= "5. ممنوع منعاً باتاً الإجابة عن أي موضوع عام خارج نطاق المنصة (مثل: البرمجة، السياسة، الرياضة، الطبخ، الأفلام، الطقس، الأسئلة العامة غير المتعلقة بالأخشاب والأثاث والورشة). إذا سألك المستخدم عن أي موضوع خارج نطاق المنصة، يجب أن تعتذر له بلباقة وتخبره بأن هذا خارج اختصاصك، وأنك مخصص حصرياً للمساعدة في خدمات وأعمال \"{$siteName}\".\n";
-        $prompt .= "6. عندما يبدي العميل رغبته في تفصيل تصميم أو طلب تسعيرة ويزودك ببياناته (الاسم ورقم الجوال والمقاسات)، قم بتأكيد استلام الطلب وأدرج كود إنشاء الطلب في نهاية إجابتك بهذه الصيغة بدقة:\n";
+        $prompt .= "=== قواعد المحادثة المستمرة والحماية الصارمة (CONVERSATIONAL CONTINUITY & STRICT RULES) ===\n";
+        $prompt .= "1. أنت في محادثة حية ومستمرة مع العميل. يجب عليك قراءة وفهم كل رسائل المحادثة السابقة بدقة، ومواصلة النقاش مع العميل بسلاسة بناءً على ما ذكره سابقاً (مثل نوع العمل، المقاسات، نوع الخشب، تفاصيل طلبه).\n";
+        $prompt .= "2. إذا سألك العميل سؤالاً تكميلياً (مثل: كم سعره؟، هل يوجد مقاس أصغر؟، ما هي الألوان؟، كيف أطلبه؟)، أجب عليه مباشرة مع ربط إجابتك بالتصميم أو الموضوع الذي كان يتحدث عنه في الرسائل السابقة.\n";
+        $prompt .= "3. إذا سألك العميل 'من أنت؟' أو 'عرفني بنفسك'، أجب بتعريف احترافي عن نفسك ووظيفتك وإمكانياتك في مساعدة العميل، دون إدراج بطاقات تصاميم إلا إذا طلب هو ذلك.\n";
+        $prompt .= "4. إذا سألك العميل عن المنصة أو اسمها 'من هي {$siteName}؟' أو 'من أنتم؟' أو 'نبذة عن الورشة'، قدم نبذة وافية وراقية تشمل اختصاصات المنصة، جودتها، عنوانها، ورقم التواصل، دون إدراج بطاقات تصاميم إلا إذا طلب ذلك.\n";
+        $prompt .= "5. لا تقم بإدراج بطاقات التصاميم [DESIGN_CARD:id] إطلاقاً إلا إذا طلب العميل صراحةً رؤية تصاميم أو صور أو أفكار أو نماذج ملهمة (مثل: أريد تصاميم، اقترح علي أفكار، اعرض نماذج، صور غرف نوم).\n";
+        $prompt .= "6. ممنوع منعاً باتاً الإجابة عن أي موضوع عام خارج نطاق المنصة (مثل: البرمجة، السياسة، الرياضة، الطبخ، الأفلام، الطقس، الأسئلة العامة غير المتعلقة بالأخشاب والأثاث والورشة). إذا سألك المستخدم عن أي موضوع خارج نطاق المنصة، يجب أن تعتذر له بلباقة وتخبره بأن هذا خارج اختصاصك، وأنك مخصص حصرياً للمساعدة في خدمات وأعمال \"{$siteName}\".\n";
+        $prompt .= "7. عندما يبدي العميل رغبته في تفصيل تصميم أو طلب تسعيرة ويزودك ببياناته (الاسم ورقم الجوال والمقاسات)، قم بتأكيد استلام الطلب وأدرج كود إنشاء الطلب في نهاية إجابتك بهذه الصيغة بدقة:\n";
         $prompt .= "[ACTION:CREATE_ORDER|name=اسم_العميل|phone=رقم_الجوال|category=نوع_العمل|wood=نوع_الخشب|dimensions=المقاسات|notes=الملاحظات]\n";
 
         return $prompt;
     }
 
     /**
-     * Build the conversation contents array for Gemini API.
+     * Build the conversation contents array for Gemini API ensuring strict alternating turns.
      */
-    protected function buildConversationContents(AiChatSession $session, string $userMessage, ?string $uploadedImagePath = null): array
+    protected function buildConversationContents(AiChatSession $session): array
     {
+        // Load messages for context window in ascending order
+        $messages = $session->messages()->orderBy('created_at', 'asc')->take(16)->get();
+
         $contents = [];
+        foreach ($messages as $msg) {
+            $role = ($msg->sender === 'user') ? 'user' : 'model';
+            $text = trim($msg->message);
+            if (empty($text)) continue;
 
-        // Load previous 8 messages for context window
-        $recentMessages = $session->messages()->orderBy('created_at', 'desc')->take(8)->get()->reverse();
-
-        foreach ($recentMessages as $msg) {
-            $role = $msg->sender === 'user' ? 'user' : 'model';
-            $parts = [['text' => $msg->message]];
-
-            if ($msg->image_path && file_exists(public_path('storage/' . $msg->image_path))) {
-                $mimeType = mime_content_type(public_path('storage/' . $msg->image_path)) ?: 'image/jpeg';
-                $base64 = base64_encode(file_get_contents(public_path('storage/' . $msg->image_path)));
-                $parts[] = [
-                    'inlineData' => [
-                        'mimeType' => $mimeType,
-                        'data' => $base64,
-                    ]
+            // Ensure alternating roles compliant with Gemini API specifications
+            $lastIndex = count($contents) - 1;
+            if ($lastIndex >= 0 && $contents[$lastIndex]['role'] === $role) {
+                // If consecutive message of the same role, merge parts
+                $contents[$lastIndex]['parts'][] = ['text' => $text];
+            } else {
+                $contents[] = [
+                    'role' => $role,
+                    'parts' => [['text' => $text]],
                 ];
             }
-
-            $contents[] = [
-                'role' => $role,
-                'parts' => $parts,
-            ];
         }
 
-        // Append current message
-        $currentParts = [['text' => $userMessage]];
-        if ($uploadedImagePath && file_exists(public_path('storage/' . $uploadedImagePath))) {
-            $mimeType = mime_content_type(public_path('storage/' . $uploadedImagePath)) ?: 'image/jpeg';
-            $base64 = base64_encode(file_get_contents(public_path('storage/' . $uploadedImagePath)));
-            $currentParts[] = [
-                'inlineData' => [
-                    'mimeType' => $mimeType,
-                    'data' => $base64,
-                ]
-            ];
+        // Gemini requires the conversation to start with 'user'
+        if (!empty($contents) && $contents[0]['role'] !== 'user') {
+            array_shift($contents);
         }
-
-        $contents[] = [
-            'role' => 'user',
-            'parts' => $currentParts,
-        ];
 
         return $contents;
     }
@@ -332,14 +316,13 @@ class GeminiAiService
     }
 
     /**
-     * Fallback joinery expert engine with self-introduction, strict guardrails, and Q&A bank integration.
+     * Fallback joinery expert engine with self-introduction, conversation memory, strict guardrails, and Q&A bank.
      */
     protected function generateFallbackResponse(AiChatSession $session, string $userMessage, ?string $trackingOrderInfo, bool $isFirstMessage = false): array
     {
         $siteName = Setting::get("site_name_{$this->locale}", ($this->locale === 'ar' ? 'أرتيزان للأعمال الخشبية' : 'Artisan Woodcraft'));
         $siteSlogan = Setting::get("site_slogan_{$this->locale}", ($this->locale === 'ar' ? 'للأعمال الخشبية الفاخرة' : 'Luxury Bespoke Woodcraft'));
         $botName = Setting::get("ai_bot_name_{$this->locale}", ($this->locale === 'ar' ? "مستشار {$siteName} الذكي" : "{$siteName} AI Consultant"));
-        $botRole = Setting::get("ai_bot_role_{$this->locale}", ($this->locale === 'ar' ? "مستشار تفصيل الأثاث والأعمال الخشبية لـ {$siteName}" : "Luxury Woodwork & Joinery Consultant for {$siteName}"));
 
         $phone = Setting::get('contact_phone') ?: Setting::get('phone', '+966500000000');
         $whatsapp = Setting::get('contact_whatsapp') ?: Setting::get('whatsapp', '+966500000000');
@@ -352,7 +335,11 @@ class GeminiAiService
 
         $msgLower = mb_strtolower(trim($userMessage));
         $cleanMsg = preg_replace('/[^\p{L}\p{N}\s]/u', '', $msgLower);
-        $siteNameLower = mb_strtolower($siteName);
+
+        // Previous conversation messages context
+        $previousMessages = $session->messages()->orderBy('created_at', 'desc')->take(6)->get();
+        $recentAssistantMsg = $previousMessages->firstWhere('sender', 'assistant')?->message ?? '';
+        $recentAssistantLower = mb_strtolower($recentAssistantMsg);
 
         // Check if user explicitly asked for designs/ideas/pictures
         $isAskingForDesigns = str_contains($msgLower, 'تصميم') || str_contains($msgLower, 'أفكار') || 
@@ -390,7 +377,7 @@ class GeminiAiService
             }
         }
 
-        // 3. User Asking "Who are you?" ("من أنت؟", "عرفني بنفسك", "ما هي وظيفتك")
+        // 3. User Asking "Who are you?" ("من أنت؟", "عرفني بنفسك", "ما هي وظيقتك")
         if (str_contains($cleanMsg, 'من انت') || str_contains($cleanMsg, 'من أنت') || 
             str_contains($cleanMsg, 'عرفني عن نفسك') || str_contains($cleanMsg, 'عرفني بنفسك') || 
             str_contains($cleanMsg, 'ما هي وظيفتك') || str_contains($cleanMsg, 'ما وظيفتك') || 
@@ -440,7 +427,56 @@ class GeminiAiService
             return ['reply' => $reply, 'order' => null, 'suggested_ideas' => []];
         }
 
-        // 5. Search in AI FAQs Knowledge Base (Exact and Keyword Match)
+        // 5. Contextual Continuity: Order Registration follow-up (User providing name/phone or requesting execution)
+        if (preg_match('/(05\d{8}|\+9665\d{8})/i', $userMessage, $phoneMatches)) {
+            $phoneFound = $phoneMatches[0];
+            $nameFound = 'عميلنا العزيز';
+            if (preg_match('/(?:اسمي|أنا|الاسم)\s+([^\d,،\.\n]+)/u', $userMessage, $nameMatches)) {
+                $nameFound = trim($nameMatches[1]);
+            }
+
+            $orderNumber = 'ORD-' . date('Y') . '-' . str_pad(CustomOrder::count() + 1, 4, '0', STR_PAD_LEFT);
+            $order = CustomOrder::create([
+                'order_number' => $orderNumber,
+                'customer_name' => $nameFound,
+                'customer_phone' => $phoneFound,
+                'customer_whatsapp' => $phoneFound,
+                'status' => 'pending',
+                'description' => "طلب مسجل من المساعد الذكي.\nنص العميل: {$userMessage}\nسياق الحوار السابق: " . mb_substr($recentAssistantMsg, 0, 300),
+            ]);
+
+            $session->update([
+                'order_id' => $order->id,
+                'user_name' => $nameFound,
+                'user_phone' => $phoneFound,
+            ]);
+
+            $reply = "🎉 **تم تسجيل طلبك بنجاح برقم:** `{$order->order_number}`\n\nأهلاً بك يا {$nameFound}! تم رفع بياناتك ومواصفات عملك للقسم الهندسي، وسيتواصل معك مهندس التنفيذ عبر الواتساب ({$phoneFound}) لتأكيد المخططات ورفع المقاسات.\n\nيمكنك تتبع حالة الطلب في أي وقت عبر الرابط: [تتبع طلبك](" . route('order.track', $order->order_number) . ")";
+
+            return [
+                'reply' => $reply,
+                'order' => [
+                    'id' => $order->id,
+                    'order_number' => $order->order_number,
+                    'tracking_url' => route('order.track', $order->order_number),
+                ],
+                'suggested_ideas' => [],
+            ];
+        }
+
+        // 6. Contextual follow-up on pricing, dimensions, or details
+        if (str_contains($msgLower, 'كم سعره') || str_contains($msgLower, 'كم السعر') || str_contains($msgLower, 'التكلفة') || str_contains($msgLower, 'بكم')) {
+            if (str_contains($recentAssistantLower, 'غرف') || str_contains($recentAssistantLower, 'سرير')) {
+                $reply = "بالنسبة لغرف النوم، تتفاوت التكلفة بحسب المقاسات ونوع الخشب المختار (مثل البلوط الطبيعي أو الجوز الأمريكي) وإكسسوارات الإضاءة. تبدأ أسعار الغرف الماستر الكاملة عادةً من 9,500 ريال وتشمل التصميم والهيكل والضمان.\n\nهل تود تزويدي بالمقاسات التقريبية لغرفتك لإعطائك تسعيرة دقيقة؟";
+            } elseif (str_contains($recentAssistantLower, 'مكتب') || str_contains($recentAssistantLower, 'طاولة')) {
+                $reply = "بالنسبة للمكاتب التنفيذية، تبدأ الأسعار للمكاتب المصنعة من خشب الجوز الأمريكي الصلب من 4,500 ريال حسب الطول وملحقات وحدات التخزين وممرات الكابلات.\n\nما هو طول المكتب الذي تفضله (مثال: 180 سم أو 220 سم)؟";
+            } else {
+                $reply = "الأسعار في **{$siteName}** تعتمد على المقاسات ونوع الخشب الطبيعي المطلوب وتفاصيل التشطيب. يمكنك تزويدي بنوع العمل والمقاسات وسأفيدك فوراً بالتكلفة التقديرية!";
+            }
+            return ['reply' => $reply, 'order' => null, 'suggested_ideas' => []];
+        }
+
+        // 7. Search in AI FAQs Knowledge Base (Exact and Keyword Match)
         $allFaqs = AiFaq::where('is_active', true)->orderBy('sort_order')->get();
         foreach ($allFaqs as $faq) {
             $qAr = mb_strtolower($faq->question_ar);
@@ -454,9 +490,9 @@ class GeminiAiService
             } elseif (!empty($qEn) && (str_contains($msgLower, $qEn) || (mb_strlen($cleanMsg) >= 6 && str_contains($qEn, $cleanMsg)))) {
                 $matched = true;
             } else {
-                // Check keywords
+                // Check keywords with min length of 4
                 foreach ($keywords as $kw) {
-                    if (!empty($kw) && mb_strlen($kw) >= 3 && str_contains($msgLower, $kw)) {
+                    if (!empty($kw) && mb_strlen($kw) >= 4 && str_contains($msgLower, $kw)) {
                         $matched = true;
                         break;
                     }
@@ -473,7 +509,7 @@ class GeminiAiService
             }
         }
 
-        // 6. Match Bedroom inquiries
+        // 8. Match Bedroom inquiries
         if (str_contains($msgLower, 'غرف') || str_contains($msgLower, 'نوم') || str_contains($msgLower, 'سرير') || str_contains($msgLower, 'دريسنج') || str_contains($msgLower, 'bedroom')) {
             $suggestedIdeas = [];
             if ($isAskingForDesigns) {
@@ -499,7 +535,7 @@ class GeminiAiService
             return ['reply' => $reply, 'order' => null, 'suggested_ideas' => $suggestedIdeas];
         }
 
-        // 7. Match Office inquiries
+        // 9. Match Office inquiries
         if (str_contains($msgLower, 'مكتب') || str_contains($msgLower, 'طاولة') || str_contains($msgLower, 'اجتماعات') || str_contains($msgLower, 'شركات') || str_contains($msgLower, 'office') || str_contains($msgLower, 'desk')) {
             $suggestedIdeas = [];
             if ($isAskingForDesigns) {
@@ -525,7 +561,7 @@ class GeminiAiService
             return ['reply' => $reply, 'order' => null, 'suggested_ideas' => $suggestedIdeas];
         }
 
-        // 8. Match Booths inquiries
+        // 10. Match Booths inquiries
         if (str_contains($msgLower, 'بوث') || str_contains($msgLower, 'معرض') || str_contains($msgLower, 'جناح') || str_contains($msgLower, 'فعالية') || str_contains($msgLower, 'booth') || str_contains($msgLower, 'exhibition')) {
             $suggestedIdeas = [];
             if ($isAskingForDesigns) {
@@ -551,7 +587,7 @@ class GeminiAiService
             return ['reply' => $reply, 'order' => null, 'suggested_ideas' => $suggestedIdeas];
         }
 
-        // 9. Match Wood types advice
+        // 11. Match Wood types advice
         if (str_contains($msgLower, 'خشب') || str_contains($msgLower, 'بلوط') || str_contains($msgLower, 'زان') || str_contains($msgLower, 'جوز') || str_contains($msgLower, 'تيك') || str_contains($msgLower, 'wood')) {
             $reply = $this->locale === 'ar'
                 ? "🪵 **دليل اختيار أنواع الأخشاب من خبراء {$siteName}:**\n\n" .
@@ -564,7 +600,7 @@ class GeminiAiService
             return ['reply' => $reply, 'order' => null, 'suggested_ideas' => []];
         }
 
-        // 10. General Hospitality Greeting & Guide (No designs dumped by default)
+        // 12. General Hospitality Greeting & Guide
         $reply = $this->locale === 'ar'
             ? "أهلاً بك في منصة **{$siteName}** ({$siteSlogan})! 🪵✨\n\nأنا **{$botName}**، يسعدني مساعدتك في كل ما يخص تفصيل الأثاث الفاخر، غرف النوم، المكاتب التنفيذية، بوثات المعارض، وتكسيات الجدران.\n\nكيف يمكنني مساعدتك في مشروعك اليوم؟"
             : "Welcome to **{$siteName}** ({$siteSlogan})! 🪵✨\n\nI am **{$botName}**, here to assist you with bespoke woodwork, luxury bedrooms, executive desks, and exhibition booths. How can I help you today?";

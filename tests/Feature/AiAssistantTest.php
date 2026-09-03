@@ -100,6 +100,29 @@ class AiAssistantTest extends TestCase
         $this->assertEquals(24, $response->json('quota.remaining'));
     }
 
+    public function test_ai_chat_maintains_conversational_continuity_across_turns()
+    {
+        $sessionRes = $this->getJson(route('ai.chat.init'));
+        $token = $sessionRes->json('session_token');
+
+        // Turn 1: User asks about bedrooms
+        $res1 = $this->postJson(route('ai.chat.send'), [
+            'session_token' => $token,
+            'message' => 'أود تفصيل غرفة نوم ماستر فاخرة',
+        ]);
+        $res1->assertStatus(200);
+
+        // Turn 2: User asks follow-up price question
+        $res2 = $this->postJson(route('ai.chat.send'), [
+            'session_token' => $token,
+            'message' => 'كم سعرها التقديري؟',
+        ]);
+        $res2->assertStatus(200);
+        $reply2 = $res2->json('reply');
+        $this->assertStringContainsString('غرف النوم', $reply2);
+        $this->assertStringContainsString('9,500', $reply2);
+    }
+
     public function test_ai_chat_answers_from_ai_faq_knowledge_base()
     {
         AiFaq::create([
